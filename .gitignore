@@ -1,0 +1,18 @@
+# Build folders
+build/
+out/
+.gradle/
+
+# IDE metadata
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+
+# Credentials (se criarmos depois)
+application-local.yaml
