@@ -4,7 +4,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/hydrosave
+      uri: mongodb+srv://Admin:pi4G24@cluster0.5zveoxy.mongodb.net/
   jackson:
     serialization:
       write-dates-as-timestamps: false
