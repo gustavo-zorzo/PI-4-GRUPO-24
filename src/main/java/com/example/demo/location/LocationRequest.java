@@ -1,6 +1,5 @@
-package com.example.demo.location.dto;
+package com.example.demo.location;
 
-import com.example.demo.location.LocationType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

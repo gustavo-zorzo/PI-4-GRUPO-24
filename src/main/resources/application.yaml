@@ -2,9 +2,13 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: hydrosave
+
   data:
     mongodb:
       uri: mongodb+srv://Admin:pi4G24@cluster0.5zveoxy.mongodb.net/pi4?retryWrites=true&w=majority
+
   jackson:
     serialization:
       write-dates-as-timestamps: false

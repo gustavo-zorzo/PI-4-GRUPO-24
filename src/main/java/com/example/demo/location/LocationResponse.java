@@ -1,7 +1,4 @@
-package com.example.demo.location.dto;
-
-import com.example.demo.location.Location;
-import com.example.demo.location.LocationType;
+package com.example.demo.location;
 
 public class LocationResponse {
 
@@ -28,4 +25,18 @@ public class LocationResponse {
     }
 
     public String getId() { return id; }
+    
+    public String getName() { return name; }
+
+    public Integer getOccupants() { return occupants; }
+
+    public Double getAreaM2() { return areaM2; }
+
+    public Double getConsumptionTargetLitersPerMonth() { return consumptionTargetLitersPerMonth; }
+
+    public LocationType getType() { return type; }
+
+    public Long getCreatedAtEpochMs() { return createdAtEpochMs; }
+
+    public Long getUpdatedAtEpochMs() { return updatedAtEpochMs; }
 }

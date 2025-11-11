@@ -1,10 +1,8 @@
 package com.example.demo.location;
 
-import com.example.demo.location.dto.LocationRequest;
-import com.example.demo.location.dto.LocationResponse;
+// Update the import path if LocationRequest is in a different package
 import jakarta.validation.Valid;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -19,18 +19,40 @@ public class HealthController {
     private MongoTemplate mongoTemplate;
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> health() {
+    public ResponseEntity<?> health() {
+
         Map<String, Object> body = new HashMap<>();
         body.put("status", "UP");
         body.put("time", OffsetDateTime.now().toString());
+
         try {
+            // Executa o ping
             var res = mongoTemplate.executeCommand("{ ping: 1 }");
-            var ok = res != null && Double.valueOf(1.0).equals(res.getDouble("ok"));
+
+            // Lê o campo "ok" de forma segura (Integer ou Double)
+            Object okVal = (res != null) ? res.get("ok") : null;
+            boolean ok = false;
+
+            if (okVal instanceof Number n) {
+                ok = n.doubleValue() == 1.0d;
+            } else if (okVal != null) {
+                ok = "1".equals(okVal.toString());
+            }
+
             body.put("mongo", ok ? "OK" : "FAIL");
+
         } catch (Exception e) {
+
             body.put("mongo", "FAIL");
+            body.put("errorClass", e.getClass().getName());
             body.put("error", e.getMessage());
+
+            if (e.getCause() != null) {
+                body.put("causeClass", e.getCause().getClass().getName());
+                body.put("cause", e.getCause().getMessage());
+            }
         }
+
         return ResponseEntity.ok(body);
     }
 }
