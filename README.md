@@ -81,5 +81,5 @@ O **HydroSave** oferece um ecossistema completo de monitoramento e conscientiza�
 - **João Victor de Faria e Souza**
 
 ---
-Este projeto está sob a licença MIT
+Este projeto está sob a licença MIT,
 Desenvolvido por estudantes da PUC Campinas.
