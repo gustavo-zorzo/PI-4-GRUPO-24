@@ -1,7 +1,7 @@
 # 💧 HydroSave – Monitoramento Inteligente de Água
 
 **HydroSave** é uma plataforma inovadora que transforma o controle do consumo de água em uma experiência inteligente e sustentável.  
-Com o uso de **IoT (Internet das Coisas)** e **análise de dados**, o sistema permite que famílias, pequenos empresários e condomínios acompanhem seu consumo em tempo real, recebam alertas de desperdício e adotem hábitos mais conscientes.
+Com o uso de **análise de dados**, o sistema permite que famílias, pequenos empresários e condomínios acompanhem seu consumo em tempo real, recebam alertas de desperdício e adotem hábitos mais conscientes.
 
 ---
 
