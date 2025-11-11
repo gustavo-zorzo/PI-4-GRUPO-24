@@ -79,6 +79,7 @@ O **HydroSave** oferece um ecossistema completo de monitoramento e conscientiza�
 - **Matheus Fernando Camagro**  
 - **Felipe Andretta**
 - **João Victor de Faria e Souza**
+- **Gabriel Scandiuzzi**
 
 ---
 Este projeto está sob a licença MIT,
