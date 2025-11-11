@@ -59,7 +59,6 @@ O **HydroSave** oferece um ecossistema completo de monitoramento e conscientiza�
 |---------------|------------|
 | Relatórios limitados | Relatórios inteligentes e personalizados |
 | Sem incentivo à mudança de hábito | Gamificação e educação ambiental |
-| Sem integração com IoT | Integração completa com sensores |
 | Foco em acompanhamento | Foco em sustentabilidade e economia |
 
 ---
