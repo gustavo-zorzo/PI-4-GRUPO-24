@@ -436,8 +436,33 @@ function Footer() {
 }
 
 export default function HydroSaveSite() {
-  const [dark, setDark] = useState(true);
+  const getInitialDark = () => {
+    try {
+      const saved = localStorage.getItem("hs:theme");
+      if (saved === "dark") return true;
+      if (saved === "light") return false;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch (e) {
+      return true;
+    }
+  };
+
+  const [dark, setDark] = useState(getInitialDark);
   const [loginOpen, setLoginOpen] = useState(false);
+
+  React.useEffect(() => {
+    try {
+      if (dark) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("hs:theme", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("hs:theme", "light");
+      }
+    } catch (e) {
+      // ignore in SSR or restricted environments
+    }
+  }, [dark]);
 
   return (
     <div className={dark ? "dark" : ""}>
