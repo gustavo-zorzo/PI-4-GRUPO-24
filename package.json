@@ -1,0 +1,21 @@
+{
+  "name": "pi-4-grupo-24",
+  "version": "1.0.0",
+  "description": "**HydroSave** é uma plataforma inovadora que transforma o controle do consumo de água em uma experiência inteligente e sustentável.  \r Com o uso de **análise de dados**, o sistema permite que famílias, pequenos empresários e condomínios acompanhem seu consumo em tempo real, recebam alertas de desperdício e adotem hábitos mais conscientes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavo-zorzo/PI-4-GRUPO-24.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gustavo-zorzo/PI-4-GRUPO-24/issues"
+  },
+  "homepage": "https://github.com/gustavo-zorzo/PI-4-GRUPO-24#readme"
+}

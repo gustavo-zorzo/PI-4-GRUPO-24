@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { LoginModal } from "./LoginModal";
 
 // ------------------------------------------------------------
 // HydroSave — Interactive React Landing + Live Demo
@@ -107,7 +108,7 @@ function WaveDivider({ flip = false }) {
   );
 }
 
-function Nav({ dark, onToggleDark }) {
+function Nav({ dark, onToggleDark, onLoginClick }) {
   return (
     <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
       <div className="flex items-center gap-3">
@@ -128,7 +129,7 @@ function Nav({ dark, onToggleDark }) {
           <span className="text-xs text-muted-foreground">{dark ? "Dark" : "Light"}</span>
           <Switch checked={dark} onCheckedChange={onToggleDark} />
         </div>
-        <Button className="rounded-xl">Entrar</Button>
+        <Button className="rounded-xl" onClick={onLoginClick}>Entrar</Button>
       </div>
     </div>
   );
@@ -436,6 +437,7 @@ function Footer() {
 
 export default function HydroSaveSite() {
   const [dark, setDark] = useState(true);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   return (
     <div className={dark ? "dark" : ""}>
@@ -443,7 +445,8 @@ export default function HydroSaveSite() {
         {/* Soft radial glow background */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_40%_at_50%_0%,hsl(var(--primary)/0.18),transparent_60%)]" />
 
-        <Nav dark={dark} onToggleDark={() => setDark((v) => !v)} />
+        <Nav dark={dark} onToggleDark={() => setDark((v) => !v)} onLoginClick={() => setLoginOpen(true)} />
+        <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
         <Hero />
         <WaveDivider />
         <FeatureGrid />
