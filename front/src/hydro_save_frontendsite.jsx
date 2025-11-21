@@ -11,7 +11,16 @@ import {
   Wifi,
   Sparkles,
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  ReferenceLine,
+} from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,11 +33,6 @@ import { LoginModal } from "./LoginModal";
 
 // ------------------------------------------------------------
 // HydroSave — Interactive React Landing + Live Demo
-// - Tailwind CSS
-// - shadcn/ui components
-// - Lucide icons
-// - Framer Motion animations
-// - Recharts mock dashboard (interactive)
 // ------------------------------------------------------------
 
 const features = [
@@ -60,7 +64,7 @@ const features = [
   {
     icon: <Wifi className="h-6 w-6" />,
     title: "IoT plug-and-play",
-    desc: "Integração simples com sensores compatíveis via Wi‑Fi.",
+    desc: "Integração simples com sensores compatíveis via Wi-Fi.",
   },
 ];
 
@@ -70,7 +74,7 @@ const tiers = [
     price: "R$ 0",
     period: "/mês",
     highlight: "Ideal para testar",
-    bullets: ["1 imóvel", "Relatórios básicos", "Alertas por e‑mail"],
+    bullets: ["1 imóvel", "Relatórios básicos", "Alertas por e-mail"],
     cta: "Começar agora",
   },
   {
@@ -108,7 +112,7 @@ function WaveDivider({ flip = false }) {
   );
 }
 
-function Nav({ dark, onToggleDark, onLoginClick }) {
+function Nav({ dark, onToggleDark, onLoginClick, user, onLogout }) {
   return (
     <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
       <div className="flex items-center gap-3">
@@ -119,17 +123,57 @@ function Nav({ dark, onToggleDark, onLoginClick }) {
         <Badge className="ml-2 rounded-full">Beta</Badge>
       </div>
       <div className="hidden items-center gap-6 md:flex">
-        <a href="#features" className="text-sm text-muted-foreground hover:text-foreground">Recursos</a>
-        <a href="#demo" className="text-sm text-muted-foreground hover:text-foreground">Demo</a>
-        <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground">Planos</a>
-        <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</a>
+        <a
+          href="#features"
+          className="text-sm text-muted-foreground hover:text-foreground"
+        >
+          Recursos
+        </a>
+        <a
+          href="#demo"
+          className="text-sm text-muted-foreground hover:text-foreground"
+        >
+          Demo
+        </a>
+        <a
+          href="#pricing"
+          className="text-sm text-muted-foreground hover:text-foreground"
+        >
+          Planos
+        </a>
+        <a
+          href="#faq"
+          className="text-sm text-muted-foreground hover:text-foreground"
+        >
+          FAQ
+        </a>
       </div>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">{dark ? "Dark" : "Light"}</span>
+          <span className="text-xs text-muted-foreground">
+            {dark ? "Dark" : "Light"}
+          </span>
           <Switch checked={dark} onCheckedChange={onToggleDark} />
         </div>
-        <Button className="rounded-xl" onClick={onLoginClick}>Entrar</Button>
+
+        {user ? (
+          <>
+            <span className="max-w-[140px] truncate text-sm text-muted-foreground">
+              Olá, {user.name}
+            </span>
+            <Button
+              variant="outline"
+              className="rounded-xl"
+              onClick={onLogout}
+            >
+              Sair
+            </Button>
+          </>
+        ) : (
+          <Button className="rounded-xl" onClick={onLoginClick}>
+            Entrar
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -152,11 +196,16 @@ function Hero() {
             Monitoramento inteligente para reduzir seu consumo de água
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Acompanhe em tempo real, receba alertas de vazamento e economize até <b>30%</b> com relatórios inteligentes.
+            Acompanhe em tempo real, receba alertas de vazamento e economize
+            até <b>30%</b> com relatórios inteligentes.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button size="lg" className="rounded-xl">Começar grátis</Button>
-            <Button size="lg" variant="outline" className="rounded-xl">Ver planos</Button>
+            <Button size="lg" className="rounded-xl">
+              Começar grátis
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-xl">
+              Ver planos
+            </Button>
           </div>
           <div className="mt-6 flex items-center gap-3 text-sm text-muted-foreground">
             <Gauge className="h-4 w-4" /> Meta: impactar 100k famílias em 2 anos
@@ -179,12 +228,22 @@ function FeatureGrid() {
   return (
     <div id="features" className="mx-auto max-w-7xl px-6 py-16">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Recursos que fazem a diferença</h2>
-        <p className="mt-3 text-muted-foreground">Mais controle, menos desperdício — com uma experiência elegante.</p>
+        <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+          Recursos que fazem a diferença
+        </h2>
+        <p className="mt-3 text-muted-foreground">
+          Mais controle, menos desperdício — com uma experiência elegante.
+        </p>
       </div>
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((f, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }}>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: i * 0.05 }}
+          >
             <Card className="h-full rounded-2xl border-muted bg-background/60 backdrop-blur">
               <CardHeader>
                 <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -222,30 +281,49 @@ function DemoPanel() {
   const multiplier = ecoMode ? 0.88 : 1; // modo eco reduz consumo
   const data = useMockData(multiplier);
 
-  const avg = useMemo(() => Math.round(data.reduce((a, b) => a + b.consumo, 0) / data.length), [data]);
+  const avg = useMemo(
+    () => Math.round(data.reduce((a, b) => a + b.consumo, 0) / data.length),
+    [data]
+  );
   const overDays = data.filter((d) => d.consumo > target).length;
 
   return (
-    <Card className="rounded-2xl border-muted">
+    <Card id="demo" className="rounded-2xl border-muted">
       <CardHeader className="space-y-1">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl">Demo em tempo real</CardTitle>
-          <Badge variant="outline" className="rounded-full"><Leaf className="mr-1 h-3 w-3" /> {ecoMode ? "Eco ligado" : "Eco desligado"}</Badge>
+          <Badge variant="outline" className="rounded-full">
+            <Leaf className="mr-1 h-3 w-3" />{" "}
+            {ecoMode ? "Eco ligado" : "Eco desligado"}
+          </Badge>
         </div>
-        <p className="text-sm text-muted-foreground">Simulação de consumo diário (L/dia) com alertas dinâmicos.</p>
+        <p className="text-sm text-muted-foreground">
+          Simulação de consumo diário (L/dia) com alertas dinâmicos.
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 md:grid-cols-3">
           <div className="md:col-span-2">
             <div className="h-[240px] w-full rounded-xl border bg-muted/20 p-2">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
+                <LineChart
+                  data={data}
+                  margin={{ top: 10, right: 10, bottom: 0, left: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="day" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip formatter={(v) => `${v} L`} labelFormatter={(l) => `Dia ${l}`} />
+                  <Tooltip
+                    formatter={(v) => `${v} L`}
+                    labelFormatter={(l) => `Dia ${l}`}
+                  />
                   <ReferenceLine y={target} strokeDasharray="5 5" />
-                  <Line type="monotone" dataKey="consumo" strokeWidth={2} dot={false} />
+                  <Line
+                    type="monotone"
+                    dataKey="consumo"
+                    strokeWidth={2}
+                    dot={false}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -254,7 +332,9 @@ function DemoPanel() {
             <div>
               <div className="mb-2 flex items-center justify-between text-sm">
                 <span>Limite de alerta</span>
-                <Badge variant="secondary" className="rounded-full">{target} L/dia</Badge>
+                <Badge variant="secondary" className="rounded-full">
+                  {target} L/dia
+                </Badge>
               </div>
               <input
                 type="range"
@@ -278,18 +358,35 @@ function DemoPanel() {
                 <span className="font-medium">{avg} L/dia</span>
               </div>
               <div className="mt-2 flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Dias acima do limite</span>
-                <span className={`font-medium ${overDays > 7 ? "text-red-500" : ""}`}>{overDays} dias</span>
+                <span className="text-muted-foreground">
+                  Dias acima do limite
+                </span>
+                <span
+                  className={`font-medium ${
+                    overDays > 7 ? "text-red-500" : ""
+                  }`}
+                >
+                  {overDays} dias
+                </span>
               </div>
             </div>
             <div className="rounded-xl border bg-background p-3 text-sm">
-              <div className="mb-2 flex items-center gap-2 font-medium"><Bell className="h-4 w-4" /> Alertas</div>
+              <div className="mb-2 flex items-center gap-2 font-medium">
+                <Bell className="h-4 w-4" /> Alertas
+              </div>
               {overDays === 0 ? (
-                <p className="text-muted-foreground">Tudo certo! Nenhum alerta recente 🚀</p>
+                <p className="text-muted-foreground">
+                  Tudo certo! Nenhum alerta recente 🚀
+                </p>
               ) : (
                 <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
-                  <li>Consumo acima de {target} L/dia detectado em {overDays} {overDays === 1 ? "dia" : "dias"}.</li>
-                  <li>Dica: ative o modo Eco e verifique vazamentos nos banheiros.</li>
+                  <li>
+                    Consumo acima de {target} L/dia detectado em {overDays}{" "}
+                    {overDays === 1 ? "dia" : "dias"}.
+                  </li>
+                  <li>
+                    Dica: ative o modo Eco e verifique vazamentos nos banheiros.
+                  </li>
                 </ul>
               )}
             </div>
@@ -304,17 +401,35 @@ function Pricing() {
   return (
     <div id="pricing" className="mx-auto max-w-7xl px-6 py-16">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-semibold md:text-4xl">Planos simples e transparentes</h2>
-        <p className="mt-3 text-muted-foreground">Escolha o plano ideal para sua casa, empresa ou condomínio.</p>
+        <h2 className="text-3xl font-semibold md:text-4xl">
+          Planos simples e transparentes
+        </h2>
+        <p className="mt-3 text-muted-foreground">
+          Escolha o plano ideal para sua casa, empresa ou condomínio.
+        </p>
       </div>
       <div className="mt-10 grid gap-6 md:grid-cols-3">
         {tiers.map((t, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }}>
-            <Card className={`h-full rounded-2xl border-muted ${t.featured ? "ring-2 ring-primary" : ""}`}>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: i * 0.05 }}
+          >
+            <Card
+              className={`h-full rounded-2xl border-muted ${
+                t.featured ? "ring-2 ring-primary" : ""
+              }`}
+            >
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>{t.name}</CardTitle>
-                  {t.featured ? <Badge className="rounded-full">Mais popular</Badge> : <span />}
+                  {t.featured ? (
+                    <Badge className="rounded-full">Mais popular</Badge>
+                  ) : (
+                    <span />
+                  )}
                 </div>
                 <div className="mt-4 flex items-baseline gap-1">
                   <span className="text-3xl font-bold">{t.price}</span>
@@ -325,7 +440,9 @@ function Pricing() {
               <CardContent className="space-y-3">
                 <ul className="space-y-2 text-sm">
                   {t.bullets.map((b, idx) => (
-                    <li key={idx} className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> {b}</li>
+                    <li key={idx} className="flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4 text-primary" /> {b}
+                    </li>
                   ))}
                 </ul>
                 <Button className="mt-4 w-full rounded-xl">{t.cta}</Button>
@@ -350,21 +467,24 @@ function TabsSection() {
         <TabsContent value="residencial" className="mt-6">
           <Card className="rounded-2xl border-muted">
             <CardContent className="p-6 text-muted-foreground">
-              Reduza gastos no lar com metas, alertas e relatórios de fácil entendimento.
+              Reduza gastos no lar com metas, alertas e relatórios de fácil
+              entendimento.
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="empresarial" className="mt-6">
           <Card className="rounded-2xl border-muted">
             <CardContent className="p-6 text-muted-foreground">
-              Controle custos operacionais e crie políticas de uso consciente com dashboards.
+              Controle custos operacionais e crie políticas de uso consciente
+              com dashboards.
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="condominios" className="mt-6">
           <Card className="rounded-2xl border-muted">
             <CardContent className="p-6 text-muted-foreground">
-              Gestão coletiva eficiente: comparativos por unidade e detecção de vazamentos.
+              Gestão coletiva eficiente: comparativos por unidade e detecção de
+              vazamentos.
             </CardContent>
           </Card>
         </TabsContent>
@@ -379,14 +499,25 @@ function Contact() {
       <div className="grid gap-8 md:grid-cols-2">
         <div>
           <h3 className="text-2xl font-semibold">Fale com a gente</h3>
-          <p className="mt-2 text-muted-foreground">Tem dúvidas sobre sensores, integração ou planos? Envie uma mensagem.</p>
+          <p className="mt-2 text-muted-foreground">
+            Tem dúvidas sobre sensores, integração ou planos? Envie uma
+            mensagem.
+          </p>
           <form className="mt-6 space-y-3">
             <Input placeholder="Seu nome" className="rounded-xl" />
-            <Input placeholder="Seu e‑mail" type="email" className="rounded-xl" />
-            <Textarea placeholder="Como podemos ajudar?" className="min-h-[120px] rounded-xl" />
+            <Input
+              placeholder="Seu e-mail"
+              type="email"
+              className="rounded-xl"
+            />
+            <Textarea
+              placeholder="Como podemos ajudar?"
+              className="min-h-[120px] rounded-xl"
+            />
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <ShieldCheck className="h-4 w-4" /> Seus dados não serão compartilhados.
+                <ShieldCheck className="h-4 w-4" /> Seus dados não serão
+                compartilhados.
               </div>
               <Button className="rounded-xl">Enviar</Button>
             </div>
@@ -395,9 +526,18 @@ function Contact() {
         <div>
           <h3 className="text-2xl font-semibold">Perguntas frequentes</h3>
           <div className="mt-4 space-y-4 text-sm">
-            <FAQ q="Como funciona a detecção de vazamentos?" a="Monitoramos padrões contínuos de fluxo e anomalias no histórico para sinalizar possíveis vazamentos em tempo real." />
-            <FAQ q="Preciso de instalação elétrica especial?" a="Não. Os sensores IoT funcionam com Wi‑Fi padrão e alimentação comum." />
-            <FAQ q="Posso exportar os relatórios?" a="Sim, planos Pro oferecem CSV e acesso via API." />
+            <FAQ
+              q="Como funciona a detecção de vazamentos?"
+              a="Monitoramos padrões contínuos de fluxo e anomalias no histórico para sinalizar possíveis vazamentos em tempo real."
+            />
+            <FAQ
+              q="Preciso de instalação elétrica especial?"
+              a="Não. Os sensores IoT funcionam com Wi-Fi padrão e alimentação comum."
+            />
+            <FAQ
+              q="Posso exportar os relatórios?"
+              a="Sim, planos Pro oferecem CSV e acesso via API."
+            />
           </div>
         </div>
       </div>
@@ -426,9 +566,15 @@ function Footer() {
           <Droplet className="h-4 w-4" /> HydroSave © {new Date().getFullYear()}
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <a className="hover:text-foreground" href="#">Termos</a>
-          <a className="hover:text-foreground" href="#">Privacidade</a>
-          <a className="hover:text-foreground" href="#">Suporte</a>
+          <a className="hover:text-foreground" href="#">
+            Termos
+          </a>
+          <a className="hover:text-foreground" href="#">
+            Privacidade
+          </a>
+          <a className="hover:text-foreground" href="#">
+            Suporte
+          </a>
         </div>
       </div>
     </footer>
@@ -441,7 +587,10 @@ export default function HydroSaveSite() {
       const saved = localStorage.getItem("hs:theme");
       if (saved === "dark") return true;
       if (saved === "light") return false;
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      );
     } catch (e) {
       return true;
     }
@@ -449,6 +598,14 @@ export default function HydroSaveSite() {
 
   const [dark, setDark] = useState(getInitialDark);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [user, setUser] = useState(() => {
+    try {
+      const raw = localStorage.getItem("hs_user");
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  });
 
   React.useEffect(() => {
     try {
@@ -470,8 +627,26 @@ export default function HydroSaveSite() {
         {/* Soft radial glow background */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_40%_at_50%_0%,hsl(var(--primary)/0.18),transparent_60%)]" />
 
-        <Nav dark={dark} onToggleDark={() => setDark((v) => !v)} onLoginClick={() => setLoginOpen(true)} />
-        <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+        <Nav
+          dark={dark}
+          onToggleDark={() => setDark((v) => !v)}
+          onLoginClick={() => setLoginOpen(true)}
+          user={user}
+          onLogout={() => {
+            setUser(null);
+            localStorage.removeItem("hs_user");
+          }}
+        />
+
+        <LoginModal
+          isOpen={loginOpen}
+          onClose={() => setLoginOpen(false)}
+          onLoggedIn={(u) => {
+            setUser(u);
+            setLoginOpen(false);
+          }}
+        />
+
         <Hero />
         <WaveDivider />
         <FeatureGrid />
@@ -484,8 +659,7 @@ export default function HydroSaveSite() {
   );
 }
 
-// Tailwind helper for input range (optional):
-// Add this to your global.css if you want a nicer slider
+// Tailwind helper para o input range (global.css):
 // .range { @apply h-2 rounded-full bg-muted outline-none; }
 // .range::-webkit-slider-thumb { @apply h-4 w-4 rounded-full bg-primary; appearance: none; margin-top: -6px; }
 // .range::-moz-range-thumb { height: 16px; width: 16px; border-radius: 9999px; background: hsl(var(--primary)); }
