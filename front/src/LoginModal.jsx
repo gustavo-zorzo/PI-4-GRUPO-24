@@ -44,7 +44,7 @@ export function LoginModal({ isOpen, onClose, onLoggedIn }) {
         const userCandidate = (formData.email || "").trim();
         const passCandidate = (formData.password || "").trim();
         if (userCandidate === "admin" && passCandidate === "admin") {
-          const userObj = { name: "admin", email: "admin" };
+          const userObj = { id: "local-admin", name: "admin", email: "admin" };
           localStorage.setItem("hs_user", JSON.stringify(userObj));
           onLoggedIn?.(userObj);
           setFormData({ name: "", email: "", password: "", confirmPassword: "" });
@@ -88,7 +88,8 @@ export function LoginModal({ isOpen, onClose, onLoggedIn }) {
 
       // Login automático
       localStorage.setItem("hs_user", JSON.stringify(user));
-      onLoggedIn?.(user);
+      // informa ao pai se o login veio via cadastro (isSignup)
+      onLoggedIn?.(user, { signup: !!isSignup });
 
       // Limpa form
       setFormData({

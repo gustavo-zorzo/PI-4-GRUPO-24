@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { LoginModal } from "./LoginModal";
+import EstablishmentForm from "./EstablishmentForm";
 
 // ------------------------------------------------------------
 // HydroSave — Interactive React Landing + Live Demo
@@ -599,6 +600,111 @@ export default function HydroSaveSite() {
     }
   });
   const [page, setPage] = useState("home");
+  const [establishments, setEstablishments] = useState([]);
+  const [showEstForm, setShowEstForm] = useState(false);
+  const [selectedEst, setSelectedEst] = useState(null);
+
+  const fetchEstablishments = async (u) => {
+    if (!u) return setEstablishments([]);
+    try {
+      const ownerId = u.id;
+      const ownerEmail = u.email;
+      const q = ownerId ? `?ownerId=${encodeURIComponent(ownerId)}` : `?ownerEmail=${encodeURIComponent(ownerEmail)}`;
+      const res = await fetch(`http://localhost:8080/api/estabelecimentos${q}`);
+      if (!res.ok) return setEstablishments([]);
+      const data = await res.json();
+      setEstablishments(data || []);
+      // tentar sincronizar quaisquer itens locais pendentes para o backend
+      try {
+        await syncLocalToBackend(u);
+      } catch (syncErr) {
+        console.warn('syncLocalToBackend failed', syncErr);
+      }
+    } catch (err) {
+      console.error('Failed to fetch from backend, loading localStorage fallback', err);
+      try {
+        const ownerKey = (u?.id) || (u?.email) || 'anon';
+        const raw = localStorage.getItem('hs_estabelecimentos') || '{}';
+        const store = JSON.parse(raw);
+        const local = store[ownerKey] || [];
+        setEstablishments(local);
+      } catch (le) {
+        console.error('Failed to load local establishments', le);
+        setEstablishments([]);
+      }
+    }
+  };
+
+  const syncLocalToBackend = async (u) => {
+    if (!u) return;
+    const ownerKey = (u?.id) || (u?.email) || 'anon';
+    try {
+      const raw = localStorage.getItem('hs_estabelecimentos') || '{}';
+      const store = JSON.parse(raw);
+      const localList = store[ownerKey] || [];
+      if (!localList.length) return;
+
+      const toSync = localList.filter((it) => it._local);
+      if (!toSync.length) return;
+
+      const backendBase = 'http://localhost:8080';
+      for (const it of toSync) {
+        const payload = {
+          tipoImovel: it.tipoImovel,
+          nomeEstabelecimento: it.nomeEstabelecimento,
+          rua: it.rua,
+          numero: it.numero,
+          bairro: it.bairro,
+          cidade: it.cidade,
+          estado: it.estado,
+          cep: it.cep,
+          pessoasQueUsam: Number(it.pessoasQueUsam) || 0,
+          hidrometroIndividual: !!it.hidrometroIndividual,
+          consumoMedioMensalLitros: Number(it.consumoMedioMensalLitros) || 0,
+          temCaixaDagua: !!it.temCaixaDagua,
+          capacidadeCaixaLitros: it.capacidadeCaixaLitros ? Number(it.capacidadeCaixaLitros) : null,
+          receberAlertas: !!it.receberAlertas,
+          limiteMaxDiarioLitros: Number(it.limiteMaxDiarioLitros) || 0,
+          verGraficos: !!it.verGraficos,
+        };
+
+        try {
+          const q = u.id ? `?ownerId=${encodeURIComponent(u.id)}` : `?ownerEmail=${encodeURIComponent(u.email)}`;
+          const resp = await fetch(`${backendBase}/api/estabelecimentos${q}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (resp.ok) {
+            // remove este item do armazenamento local
+            store[ownerKey] = store[ownerKey].filter((x) => x.id !== it.id);
+            localStorage.setItem('hs_estabelecimentos', JSON.stringify(store));
+          } else {
+            // se falhar no servidor, não prossegue com esse item
+            const text = await resp.text().catch(() => null);
+            console.warn('Failed to sync item', it.id, resp.status, text);
+          }
+        } catch (e) {
+          console.error('Network error while syncing', e);
+          throw e; // abort sync loop on network error
+        }
+      }
+
+      // após sincronizar, refazer fetch para atualizar a lista do backend
+      try {
+        const q2 = u.id ? `?ownerId=${encodeURIComponent(u.id)}` : `?ownerEmail=${encodeURIComponent(u.email)}`;
+        const r2 = await fetch(`http://localhost:8080/api/estabelecimentos${q2}`);
+        if (r2.ok) {
+          const d2 = await r2.json();
+          setEstablishments(d2 || []);
+        }
+      } catch (e) {
+        // ignore
+      }
+    } catch (e) {
+      console.error('syncLocalToBackend failed overall', e);
+    }
+  };
 
   React.useEffect(() => {
     try {
@@ -613,6 +719,10 @@ export default function HydroSaveSite() {
       // ignore in SSR or restricted environments
     }
   }, [dark]);
+
+  React.useEffect(() => {
+    fetchEstablishments(user);
+  }, [user]);
 
   return (
     <div className={dark ? "dark" : ""}>
@@ -635,7 +745,8 @@ export default function HydroSaveSite() {
         <LoginModal
           isOpen={loginOpen}
           onClose={() => setLoginOpen(false)}
-          onLoggedIn={(u) => {
+          onLoggedIn={(u/*, ctx */) => {
+            // Não abrir automaticamente o formulário; usuário deve clicar no CTA
             setUser(u);
             setLoginOpen(false);
             setPage("home");
@@ -668,8 +779,77 @@ export default function HydroSaveSite() {
                 <Button onClick={() => setPage("alerts")} variant="outline">Alertas</Button>
                 <Button onClick={() => setPage("reports")} variant="outline">Relatórios</Button>
                 <Button onClick={() => setPage("tips")} variant="outline">Dicas</Button>
+                <Button onClick={() => setShowEstForm(true)} variant="secondary">Adicionar Estabelecimento</Button>
               </div>
             </div>
+
+            {/* Se não tiver estabelecimentos, mostra card chamativo com botão grande */}
+            {establishments.length === 0 ? (
+              <div className="mb-6">
+                <Card className="rounded-2xl border-muted bg-blue-600 text-white p-6">
+                  <CardContent>
+                    <h2 className="text-2xl font-bold">Comece monitorando seu consumo de água agora mesmo!</h2>
+                    <p className="mt-2">Para iniciar, cadastre seu estabelecimento.</p>
+                    <div className="mt-4">
+                      <Button size="lg" className="bg-white text-blue-700" onClick={() => setShowEstForm(true)}>👉 Cadastre seu Estabelecimento para Começar</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : (
+              <div>
+                <div className="mb-4 flex items-center justify-end">
+                  <Button onClick={() => setShowEstForm(true)} size="sm">+ Adicionar Estabelecimento</Button>
+                </div>
+                <div className="mb-6 grid gap-4 md:grid-cols-2">
+                {establishments.map((e) => (
+                  <Card key={e.id} className="rounded-2xl">
+                    <CardHeader>
+                      <CardTitle>{e.nomeEstabelecimento}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm">Consumo médio: {e.consumoMedioMensalLitros ?? '-'} L/mês</p>
+                      <p className="text-sm">Status: ativo</p>
+                      <div className="mt-3">
+                        <Button variant="outline" onClick={() => setSelectedEst(e)}>Ver detalhes</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                </div>
+              </div>
+            )}
+
+            {showEstForm && (
+              <div className="mb-6">
+                <EstablishmentForm user={user} onSaved={(saved) => { fetchEstablishments(user); }} onClose={() => setShowEstForm(false)} />
+              </div>
+            )}
+
+            {/* Details modal for selected establishment */}
+            {selectedEst && (
+              <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 px-4">
+                <div className="rounded-2xl border bg-background p-6 shadow-lg">
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-xl font-semibold">Detalhes do Estabelecimento</h3>
+                    <button onClick={() => setSelectedEst(null)} className="text-sm text-muted-foreground">Fechar</button>
+                  </div>
+                  <div className="mt-4 space-y-2 text-sm">
+                    <div><strong>Nome:</strong> {selectedEst.nomeEstabelecimento}</div>
+                    <div><strong>Tipo:</strong> {selectedEst.tipoImovel}</div>
+                    <div><strong>Endereço:</strong> {selectedEst.rua}, {selectedEst.numero} - {selectedEst.bairro}, {selectedEst.cidade} / {selectedEst.estado} - CEP {selectedEst.cep}</div>
+                    <div><strong>Pessoas:</strong> {selectedEst.pessoasQueUsam}</div>
+                    <div><strong>Hidrômetro individual:</strong> {selectedEst.hidrometroIndividual ? 'Sim' : 'Não'}</div>
+                    <div><strong>Consumo médio (L/mês):</strong> {selectedEst.consumoMedioMensalLitros}</div>
+                    <div><strong>Tem caixa d'água:</strong> {selectedEst.temCaixaDagua ? 'Sim' : 'Não'}</div>
+                    {selectedEst.capacidadeCaixaLitros && <div><strong>Capacidade caixa (L):</strong> {selectedEst.capacidadeCaixaLitros}</div>}
+                    <div><strong>Receber alertas:</strong> {selectedEst.receberAlertas ? 'Sim' : 'Não'}</div>
+                    <div><strong>Limite diário (L):</strong> {selectedEst.limiteMaxDiarioLitros}</div>
+                    <div><strong>Ver gráficos:</strong> {selectedEst.verGraficos ? 'Sim' : 'Não'}</div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div>
               {page === "home" && (
