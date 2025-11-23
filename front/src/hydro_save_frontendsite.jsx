@@ -112,7 +112,7 @@ function WaveDivider({ flip = false }) {
   );
 }
 
-function Nav({ dark, onToggleDark, onLoginClick, user, onLogout }) {
+function Nav({ dark, onToggleDark, onLoginClick, user, onLogout, onNavigate }) {
   return (
     <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
       <div className="flex items-center gap-3">
@@ -123,30 +123,22 @@ function Nav({ dark, onToggleDark, onLoginClick, user, onLogout }) {
         <Badge className="ml-2 rounded-full">Beta</Badge>
       </div>
       <div className="hidden items-center gap-6 md:flex">
-        <a
-          href="#features"
-          className="text-sm text-muted-foreground hover:text-foreground"
-        >
-          Recursos
-        </a>
-        <a
-          href="#demo"
-          className="text-sm text-muted-foreground hover:text-foreground"
-        >
-          Demo
-        </a>
-        <a
-          href="#pricing"
-          className="text-sm text-muted-foreground hover:text-foreground"
-        >
-          Planos
-        </a>
-        <a
-          href="#faq"
-          className="text-sm text-muted-foreground hover:text-foreground"
-        >
-          FAQ
-        </a>
+        {user ? (
+          <>
+            <button onClick={() => onNavigate?.("home")} className="text-sm text-muted-foreground hover:text-foreground">Home</button>
+            <button onClick={() => onNavigate?.("realtime")} className="text-sm text-muted-foreground hover:text-foreground">Monitoramento</button>
+            <button onClick={() => onNavigate?.("alerts")} className="text-sm text-muted-foreground hover:text-foreground">Alertas</button>
+            <button onClick={() => onNavigate?.("reports")} className="text-sm text-muted-foreground hover:text-foreground">Relatórios</button>
+            <button onClick={() => onNavigate?.("tips")} className="text-sm text-muted-foreground hover:text-foreground">Dicas</button>
+          </>
+        ) : (
+          <>
+            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground">Recursos</a>
+            <a href="#demo" className="text-sm text-muted-foreground hover:text-foreground">Demo</a>
+            <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground">Planos</a>
+            <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</a>
+          </>
+        )}
       </div>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
@@ -606,6 +598,7 @@ export default function HydroSaveSite() {
       return null;
     }
   });
+  const [page, setPage] = useState("home");
 
   React.useEffect(() => {
     try {
@@ -636,6 +629,7 @@ export default function HydroSaveSite() {
             setUser(null);
             localStorage.removeItem("hs_user");
           }}
+          onNavigate={(p) => setPage(p)}
         />
 
         <LoginModal
@@ -644,16 +638,135 @@ export default function HydroSaveSite() {
           onLoggedIn={(u) => {
             setUser(u);
             setLoginOpen(false);
+            setPage("home");
           }}
         />
 
-        <Hero />
-        <WaveDivider />
-        <FeatureGrid />
-        <TabsSection />
-        <Pricing />
-        <Contact />
-        <Footer />
+        {/* Se o usuário não estiver logado mostra a landing pública */}
+        {!user ? (
+          <>
+            <Hero />
+            <WaveDivider />
+            <FeatureGrid />
+            <TabsSection />
+            <Pricing />
+            <Contact />
+            <Footer />
+          </>
+        ) : (
+          // App protegido (Home + páginas internas)
+          <div className="mx-auto max-w-7xl px-6 py-8">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold">HydroSave</h1>
+                <p className="text-muted-foreground">Seja bem-vindo, {user.name}!</p>
+                <p className="mt-2 text-lg">Monitoramento inteligente de consumo de água</p>
+              </div>
+              <div className="flex gap-3">
+                <Button onClick={() => setPage("home")}>Home</Button>
+                <Button onClick={() => setPage("realtime")} variant="outline">Monitoramento</Button>
+                <Button onClick={() => setPage("alerts")} variant="outline">Alertas</Button>
+                <Button onClick={() => setPage("reports")} variant="outline">Relatórios</Button>
+                <Button onClick={() => setPage("tips")} variant="outline">Dicas</Button>
+              </div>
+            </div>
+
+            <div>
+              {page === "home" && (
+                <div className="space-y-6">
+                  <Card className="rounded-2xl border-muted">
+                    <CardHeader>
+                      <CardTitle>Painel de Tendências</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <DemoPanel />
+                    </CardContent>
+                  </Card>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Card className="rounded-2xl">
+                      <CardHeader>
+                        <CardTitle>Avisos importantes</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground">Aqui serão exibidos alertas e relatórios importantes — vazamentos detectados, picos de consumo e recomendações.</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="rounded-2xl">
+                      <CardHeader>
+                        <CardTitle>Atalhos</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-col gap-2">
+                          <Button onClick={() => setPage("realtime")} variant="ghost">Monitoramento em tempo real</Button>
+                          <Button onClick={() => setPage("alerts")} variant="ghost">Alertas de consumo</Button>
+                          <Button onClick={() => setPage("reports")} variant="ghost">Relatórios</Button>
+                          <Button onClick={() => setPage("tips")} variant="ghost">Dicas de economia</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+
+              {page === "realtime" && (
+                <div>
+                  <h2 className="text-2xl font-semibold">Monitoramento em Tempo Real</h2>
+                  <p className="text-muted-foreground mt-2">Exibe o consumo atual e histórico em gráfico, atualizado automaticamente.</p>
+                  <div className="mt-4"><DemoPanel /></div>
+                </div>
+              )}
+
+              {page === "alerts" && (
+                <div>
+                  <h2 className="text-2xl font-semibold">Alertas de Consumo</h2>
+                  <p className="text-muted-foreground mt-2">Mostra alertas de uso excessivo ou possíveis vazamentos.</p>
+                  <div className="mt-4">
+                    <Card>
+                      <CardContent>
+                        <p className="text-sm">Nenhum alerta crítico no momento.</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+
+              {page === "reports" && (
+                <div>
+                  <h2 className="text-2xl font-semibold">Relatórios</h2>
+                  <p className="text-muted-foreground mt-2">Gera relatórios semanais e mensais personalizados.</p>
+                  <div className="mt-4">
+                    <Card>
+                      <CardContent>
+                        <p className="text-sm">Relatórios disponíveis: Semanal, Mensal. (Funcionalidade de exportação futura)</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+
+              {page === "tips" && (
+                <div>
+                  <h2 className="text-2xl font-semibold">Dicas de Economia</h2>
+                  <p className="text-muted-foreground mt-2">Lista de dicas práticas para reduzir o uso de água.</p>
+                  <div className="mt-4 space-y-2">
+                    <Card>
+                      <CardContent>
+                        <ul className="list-disc pl-5 text-sm">
+                          <li>Conserte vazamentos imediatamente.</li>
+                          <li>Instale arejadores em torneiras.</li>
+                          <li>Use menos água ao tomar banho (tempo reduzido).</li>
+                          <li>Reaproveite água sempre que possível.</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

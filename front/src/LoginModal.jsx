@@ -39,6 +39,21 @@ export function LoginModal({ isOpen, onClose, onLoggedIn }) {
     }
 
     try {
+      // Local test account fallback (admin/admin)
+      if (!isSignup) {
+        const userCandidate = (formData.email || "").trim();
+        const passCandidate = (formData.password || "").trim();
+        if (userCandidate === "admin" && passCandidate === "admin") {
+          const userObj = { name: "admin", email: "admin" };
+          localStorage.setItem("hs_user", JSON.stringify(userObj));
+          onLoggedIn?.(userObj);
+          setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+          setIsSignup(false);
+          onClose?.();
+          return;
+        }
+      }
+
       let response;
 
       if (isSignup) {
@@ -142,14 +157,15 @@ export function LoginModal({ isOpen, onClose, onLoggedIn }) {
 
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-foreground">
-                      Email
+                      {isSignup ? "Email" : "Usuário ou Email"}
                     </label>
                     <Input
-                      type="email"
+                      type={isSignup ? "email" : "text"}
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       required
+                      placeholder={isSignup ? undefined : "admin"}
                       className="bg-white text-slate-900 border border-slate-200 rounded-md px-3 py-2 dark:bg-slate-800 dark:text-slate-50 dark:border-slate-700"
                     />
                   </div>
