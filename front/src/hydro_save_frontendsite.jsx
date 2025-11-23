@@ -115,34 +115,34 @@ function WaveDivider({ flip = false }) {
 function Nav({ dark, onToggleDark, onLoginClick, user, onLogout, onNavigate }) {
   return (
     <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/10">
           <Droplet className="h-5 w-5 text-primary" />
         </div>
-        <span className="text-xl font-semibold tracking-tight">HydroSave</span>
-        <Badge className="ml-2 rounded-full">Beta</Badge>
+        <span className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">HydroSave</span>
+        <Badge className="ml-2 rounded-full text-slate-700 dark:text-slate-200">Beta</Badge>
       </div>
       <div className="hidden items-center gap-6 md:flex">
         {user ? (
           <>
-            <button onClick={() => onNavigate?.("home")} className="text-sm text-muted-foreground hover:text-foreground">Home</button>
-            <button onClick={() => onNavigate?.("realtime")} className="text-sm text-muted-foreground hover:text-foreground">Monitoramento</button>
-            <button onClick={() => onNavigate?.("alerts")} className="text-sm text-muted-foreground hover:text-foreground">Alertas</button>
-            <button onClick={() => onNavigate?.("reports")} className="text-sm text-muted-foreground hover:text-foreground">Relatórios</button>
-            <button onClick={() => onNavigate?.("tips")} className="text-sm text-muted-foreground hover:text-foreground">Dicas</button>
+            <button onClick={() => onNavigate?.("home")} className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">Home</button>
+            <button onClick={() => onNavigate?.("realtime")} className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">Monitoramento</button>
+            <button onClick={() => onNavigate?.("alerts")} className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">Alertas</button>
+            <button onClick={() => onNavigate?.("reports")} className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">Relatórios</button>
+            <button onClick={() => onNavigate?.("tips")} className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">Dicas</button>
           </>
         ) : (
           <>
-            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground">Recursos</a>
-            <a href="#demo" className="text-sm text-muted-foreground hover:text-foreground">Demo</a>
-            <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground">Planos</a>
-            <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</a>
+            <a href="#features" className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">Recursos</a>
+            <a href="#demo" className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">Demo</a>
+            <a href="#pricing" className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">Planos</a>
+            <a href="#faq" className="text-sm text-slate-700 dark:text-slate-300 hover:text-foreground">FAQ</a>
           </>
         )}
       </div>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-slate-700 dark:text-slate-300">
             {dark ? "Dark" : "Light"}
           </span>
           <Switch checked={dark} onCheckedChange={onToggleDark} />
@@ -150,19 +150,19 @@ function Nav({ dark, onToggleDark, onLoginClick, user, onLogout, onNavigate }) {
 
         {user ? (
           <>
-            <span className="max-w-[140px] truncate text-sm text-muted-foreground">
+            <span className="max-w-[140px] truncate text-sm text-slate-700 dark:text-slate-300">
               Olá, {user.name}
             </span>
             <Button
               variant="outline"
-              className="rounded-xl"
+              className="rounded-xl text-foreground"
               onClick={onLogout}
             >
               Sair
             </Button>
           </>
         ) : (
-          <Button className="rounded-xl" onClick={onLoginClick}>
+          <Button className="rounded-xl text-foreground" onClick={onLoginClick}>
             Entrar
           </Button>
         )}
