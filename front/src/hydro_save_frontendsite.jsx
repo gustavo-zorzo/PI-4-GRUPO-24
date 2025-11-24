@@ -850,8 +850,7 @@ export default function HydroSaveSite() {
                 </div>
               </div>
             )}
-
-            {showEstForm && (
+{showEstForm && (
 <div
   className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950"
   onClick={() => setShowEstForm(false)}
@@ -879,6 +878,7 @@ export default function HydroSaveSite() {
     </div>
   </div>
 )}
+            
 
 
 
