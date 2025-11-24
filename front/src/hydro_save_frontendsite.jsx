@@ -987,23 +987,92 @@ export default function HydroSaveSite() {
               )}
 
               {page === "tips" && (
-                <div>
-                  <h2 className="text-2xl font-semibold">Dicas de Economia</h2>
-                  <p className="text-muted-foreground mt-2">Lista de dicas práticas para reduzir o uso de água.</p>
-                  <div className="mt-4 space-y-2">
-                    <Card>
-                      <CardContent>
-                        <ul className="list-disc pl-5 text-sm">
-                          <li>Conserte vazamentos imediatamente.</li>
-                          <li>Instale arejadores em torneiras.</li>
-                          <li>Use menos água ao tomar banho (tempo reduzido).</li>
-                          <li>Reaproveite água sempre que possível.</li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              )}
+  <div>
+    <h2 className="text-2xl font-semibold">Guia Corporativo de Economia de Água</h2>
+    <p className="text-muted-foreground mt-2">
+      Práticas estratégicas para otimizar o consumo de água em ambientes residenciais e corporativos.
+    </p>
+
+    <div className="grid gap-4 mt-6 md:grid-cols-2">
+      {/* --- Card 1: Vazamentos --- */}
+      <Card className="rounded-2xl">
+        <CardHeader className="flex flex-row items-center gap-3">
+          <AlertTriangle className="h-8 w-8 text-primary" />
+          <CardTitle>Correção Imediata de Vazamentos</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-muted-foreground">
+          Vazamentos representam perdas contínuas que aumentam custos e riscos
+          estruturais. Estabeleça rotinas de inspeção e reparos rápidos.
+          <div className="mt-4">
+            <p className="font-medium text-foreground">Impacto estimado:</p>
+            <div className="w-full bg-muted h-2 rounded-full mt-1">
+              <div className="bg-primary h-2 rounded-full w-[85%]"></div>
+            </div>
+            <p className="text-xs mt-1">Até 85% de economia quando resolvido imediatamente.</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* --- Card 2: Arejadores --- */}
+      <Card className="rounded-2xl">
+        <CardHeader className="flex flex-row items-center gap-3">
+          <Droplet className="h-8 w-8 text-primary" />
+          <CardTitle>Tecnologias Economizadoras</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-muted-foreground">
+          Utilize arejadores, redutores de vazão e equipamentos inteligentes
+          para diminuir o consumo sem afetar o desempenho.
+          <div className="mt-4">
+            <p className="font-medium text-foreground">Redução média:</p>
+            <div className="w-full bg-muted h-2 rounded-full mt-1">
+              <div className="bg-primary h-2 rounded-full w-[60%]"></div>
+            </div>
+            <p className="text-xs mt-1">Economia de até 60% no uso diário.</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* --- Card 3: Tempo de Banho --- */}
+      <Card className="rounded-2xl">
+        <CardHeader className="flex flex-row items-center gap-3">
+          <Gauge className="h-8 w-8 text-primary" />
+          <CardTitle>Otimização do Tempo de Uso</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-muted-foreground">
+          Reduzir o tempo de banho e uso contínuo de torneiras diminui o consumo
+          sem comprometer a rotina.
+          <div className="mt-4">
+            <p className="font-medium text-foreground">Consumo por minuto:</p>
+            <div className="w-full bg-muted h-2 rounded-full mt-1">
+              <div className="bg-primary h-2 rounded-full w-[40%]"></div>
+            </div>
+            <p className="text-xs mt-1">Banhos curtos podem reduzir 40% do gasto.</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* --- Card 4: Reaproveitamento --- */}
+      <Card className="rounded-2xl">
+        <CardHeader className="flex flex-row items-center gap-3">
+          <Leaf className="h-8 w-8 text-primary" />
+          <CardTitle>Reaproveitamento de Água</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-muted-foreground">
+          Utilize água de chuva ou água cinza para limpeza, irrigação e outros
+          usos não potáveis.
+          <div className="mt-4">
+            <p className="font-medium text-foreground">Potencial de redução:</p>
+            <div className="w-full bg-muted h-2 rounded-full mt-1">
+              <div className="bg-primary h-2 rounded-full w-[70%]"></div>
+            </div>
+            <p className="text-xs mt-1">Redução de até 70% em atividades secundárias.</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+)}
+
             </div>
           </div>
         )}
