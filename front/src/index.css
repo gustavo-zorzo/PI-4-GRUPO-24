@@ -1,20 +1,26 @@
 @import "tailwindcss";
 
-/* === Design tokens (estilo shadcn) === */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 47.4% 11.2%;
+  /* Fundo um pouco mais escuro (off-white) para parar de “estourar” tudo */
+  --background: 210 25% 95%;
+  /* Texto mais escuro para aumentar bem o contraste */
+  --foreground: 222 47% 8%;
 
+  /* Mantém o azul como cor de ação principal */
   --primary: 206 86% 49%;
   --primary-foreground: 210 40% 98%;
 
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  /* Áreas “muted” (cards, seções secundárias) menos lavadas */
+  --muted: 210 18% 90%;
+  --muted-foreground: 222 25% 22%;
 
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 215 20.2% 65.1%;
+  /* Bordas e inputs mais visíveis no claro */
+  --border: 215 15% 75%;
+  --input: 215 15% 75%;
+  --ring: 215 40% 45%;
 }
+
+
 
 .dark {
   --background: 222.2 84% 4.9%;
