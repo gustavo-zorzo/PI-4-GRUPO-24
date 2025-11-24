@@ -316,10 +316,21 @@ function DemoPanel() {
       <CardHeader className="space-y-1">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl">Demo em tempo real</CardTitle>
-          <Badge variant="outline" className="rounded-full">
-            <Leaf className="mr-1 h-3 w-3" />{" "}
-            {ecoMode ? "Eco ligado" : "Eco desligado"}
-          </Badge>
+          <Badge
+  variant="outline"
+  className="rounded-full bg-white/10 text-foreground border-white/20"
+>
+  <Leaf className="mr-1 h-3 w-3" />{" "}
+  {ecoMode ? "Eco ligado" : "Eco desligado"}
+</Badge>
+...
+<Badge
+  variant="secondary"
+  className="rounded-full bg-white/10 text-foreground"
+>
+  {target} L/dia
+</Badge>
+
         </div>
         <p className="text-sm text-muted-foreground">
           Simulação de consumo diário (L/dia) com alertas dinâmicos.
