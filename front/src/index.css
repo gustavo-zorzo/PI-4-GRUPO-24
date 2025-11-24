@@ -9,8 +9,7 @@
   --muted-foreground: 222 25% 26%;
 
   /* Borda real — contraste bom */
-  --border: 215 14% 65%;
-
+  --border: 215 15% 75%;
   --input: 215 15% 75%;
   --ring: 215 35% 45%;
 
@@ -61,4 +60,3 @@ select option {
   background-color: #0a1528 !important;
   color: white !important;
 }
-
