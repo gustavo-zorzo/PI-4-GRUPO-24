@@ -973,18 +973,72 @@ export default function HydroSaveSite() {
               )}
 
               {page === "reports" && (
-                <div>
-                  <h2 className="text-2xl font-semibold">Relatórios</h2>
-                  <p className="text-muted-foreground mt-2">Gera relatórios semanais e mensais personalizados.</p>
-                  <div className="mt-4">
-                    <Card>
-                      <CardContent>
-                        <p className="text-sm">Relatórios disponíveis: Semanal, Mensal. (Funcionalidade de exportação futura)</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              )}
+  <div>
+    <h2 className="text-2xl font-semibold">Relatórios</h2>
+    <p className="text-muted-foreground mt-2">
+      Gere relatórios semanais e mensais com insights de consumo.
+    </p>
+
+    <div className="mt-6 rounded-2xl border bg-background/40 backdrop-blur p-4">
+      <table className="w-full text-sm">
+        <thead className="text-muted-foreground border-b">
+          <tr>
+            <th className="py-3 text-left">Tipo</th>
+            <th className="py-3 text-left">Descrição</th>
+            <th className="py-3 text-left">Status</th>
+            <th className="py-3 text-right">Ação</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr className="border-b border-muted/30">
+            <td className="py-3 font-medium">Semanal</td>
+            <td className="text-muted-foreground">
+              Relatório com tendências dos últimos 7 dias.
+            </td>
+            <td>
+              <Badge className="bg-green-600/10 text-green-400">Disponível</Badge>
+            </td>
+            <td className="text-right">
+              <Button variant="outline" size="sm" className="rounded-xl">Gerar</Button>
+            </td>
+          </tr>
+
+          <tr className="border-b border-muted/30">
+            <td className="py-3 font-medium">Mensal</td>
+            <td className="text-muted-foreground">
+              Comparativo entre meses + pico de consumo.
+            </td>
+            <td>
+              <Badge className="bg-yellow-600/10 text-yellow-400">Em desenvolvimento</Badge>
+            </td>
+            <td className="text-right">
+              <Button disabled variant="outline" size="sm" className="rounded-xl opacity-60">
+                Em breve
+              </Button>
+            </td>
+          </tr>
+
+          <tr>
+            <td className="py-3 font-medium">Exportação CSV/API</td>
+            <td className="text-muted-foreground">
+              Exportação de todos os dados para auditoria.
+            </td>
+            <td>
+              <Badge className="bg-blue-600/10 text-blue-400">Planejado</Badge>
+            </td>
+            <td className="text-right">
+              <Button disabled size="sm" className="rounded-xl">
+                🚧
+              </Button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
+
 
               {page === "tips" && (
   <div>
