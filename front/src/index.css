@@ -1,24 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  /* Fundo um pouco mais escuro (off-white) para parar de “estourar” tudo */
-  --background: 210 25% 95%;
-  /* Texto mais escuro para aumentar bem o contraste */
-  --foreground: 222 47% 8%;
+  --background: 0 0% 100%;
+  --foreground: 222 47% 5%;
 
-  /* Mantém o azul como cor de ação principal */
+  /* Áreas secundárias (caixas atrás do conteúdo) */
+  --muted: 210 20% 96%;
+  --muted-foreground: 222 25% 26%;
+
+  /* Borda real — contraste bom */
+  --border: 215 14% 65%;
+
+  --input: 215 15% 75%;
+  --ring: 215 35% 45%;
+
   --primary: 206 86% 49%;
   --primary-foreground: 210 40% 98%;
-
-  /* Áreas “muted” (cards, seções secundárias) menos lavadas */
-  --muted: 210 18% 90%;
-  --muted-foreground: 222 25% 22%;
-
-  /* Bordas e inputs mais visíveis no claro */
-  --border: 215 15% 75%;
-  --input: 215 15% 75%;
-  --ring: 215 40% 45%;
 }
+
 
 
 
@@ -50,3 +49,16 @@
 
 /* Slider usado no componente */
 .range { height: 0.5rem; border-radius: 9999px; background: hsl(var(--muted)); outline: none; }
+/* Estilo global para selects no dark mode */
+select {
+  background-color: #0a1528 !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Estilo do dropdown aberto */
+select option {
+  background-color: #0a1528 !important;
+  color: white !important;
+}
+

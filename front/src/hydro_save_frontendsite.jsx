@@ -852,10 +852,39 @@ export default function HydroSaveSite() {
             )}
 
             {showEstForm && (
-              <div className="mb-6">
-                <EstablishmentForm user={user} onSaved={(saved) => { fetchEstablishments(user); }} onClose={() => setShowEstForm(false)} />
-              </div>
-            )}
+<div
+  className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950"
+  onClick={() => setShowEstForm(false)}
+>
+
+    <div
+      className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl border bg-background text-foreground p-6 shadow-xl"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <EstablishmentForm
+        user={user}
+        onSaved={(saved) => {
+          fetchEstablishments(user);
+          setShowEstForm(false);
+        }}
+        onClose={() => setShowEstForm(false)}
+      />
+
+      <button
+        className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+        onClick={() => setShowEstForm(false)}
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
+
+
+
+
+
+
 
             {/* Details modal for selected establishment */}
             {selectedEst && (
