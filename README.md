@@ -1,86 +1,84 @@
 # 💧 HydroSave – Monitoramento Inteligente de Água
 
-**HydroSave** é uma plataforma inovadora que transforma o controle do consumo de água em uma experiência inteligente e sustentável.  
-Com o uso de **análise de dados**, o sistema permite que famílias, pequenos empresários e condomínios acompanhem seu consumo em tempo real, recebam alertas de desperdício e adotem hábitos mais conscientes.
+O **HydroSave** é uma plataforma inteligente que transforma o controle do consumo de água em uma experiência simples, acessível e sustentável.  
+Com **análise de dados**, o sistema permite que famílias, pequenos empresários e condomínios acompanhem seu consumo, recebam alertas de desperdício e adotem hábitos mais conscientes.
 
 ---
 
 ## 🌍 Problema
 
-O desperdício de água é um dos grandes desafios ambientais e econômicos da atualidade.
+O desperdício de água é um dos maiores desafios ambientais e econômicos da atualidade:
 
-- 💸 **Contas elevadas** — falta de visibilidade sobre o consumo diário.  
-- 🚰 **Desperdício constante** — ausência de monitoramento e feedback imediato.  
-- 🧍‍♂️ **Práticas inconscientes** — usuários não percebem o impacto do uso excessivo.
+- 💸 **Contas elevadas** por falta de visibilidade do consumo diário.  
+- 🚰 **Desperdício constante** pela ausência de feedback imediato.  
+- 🧍‍♂️ **Práticas inconscientes**, que impedem o usuário de perceber o impacto real do uso excessivo.
 
 ---
 
 ## 💡 Solução
 
-O **HydroSave** oferece um ecossistema completo de monitoramento e conscientização:
+O **HydroSave** oferece um ecossistema completo de acompanhamento e conscientização:
 
-- 📊 **Monitoramento em tempo real** do consumo de água.  
-- ⚠️ **Alertas automáticos** de vazamentos e uso excessivo.  
-- 📅 **Relatórios semanais e mensais personalizados.**  
-- 💧 **Dicas práticas de economia** baseadas em dados reais.  
-- 🔗 **Integração com sensores IoT inteligentes.**
+- 📊 **Acompanhamento fácil** do registro de consumo.  
+- ⚠️ **Alertas automáticos** de uso excessivo.  
+- 📅 **Relatórios semanais e mensais** personalizados.  
+- 💧 **Dicas práticas de economia**, baseadas no perfil do usuário.
 
 ---
 
 ## 👥 Público-Alvo
 
-- 🏠 **Famílias conscientes:** redução de gastos e sustentabilidade no lar.  
-- 🏢 **Pequenos empresários:** controle de custos operacionais.  
-- 🏘️ **Síndicos e gestores:** gestão eficiente de consumo coletivo.
+- 🏠 **Famílias:** redução de gastos e sustentabilidade no dia a dia.  
+- 🏢 **Pequenos empresários:** maior controle dos custos operacionais.  
+- 🏘️ **Condomínios e síndicos:** gestão eficiente e transparente do consumo coletivo.
 
 ---
 
 ## ⚙️ Arquitetura e Tecnologias
 
-- **Frontend:** React.js / HTML / CSS  
+- **Frontend:** React.js, HTML, CSS  
 - **Backend:** Node.js / Express  
 - **Banco de Dados:** MongoDB  
-
 
 ---
 
 ## 💼 Modelo de Negócio
 
-- 🪙 **Assinaturas:** planos mensais e anuais do aplicativo.  
-- 🧠 **Venda de sensores IoT:** dispositivos inteligentes para residências e empresas.  
-- 🌱 **Parcerias verdes:** integração com concessionárias e marcas sustentáveis.  
-- 📢 **Publicidade ecológica:** anúncios de produtos eco-friendly.
+- 🪙 **Assinaturas** mensais e anuais da plataforma.  
+- 🌱 **Parcerias sustentáveis** com empresas do setor.  
+- 📢 **Publicidade ecológica** dentro do app, focada em produtos sustentáveis.
 
 ---
 
 ## 🧩 Diferenciais Competitivos
 
 | Concorrentes | HydroSave |
-|---------------|------------|
-| Relatórios limitados | Relatórios inteligentes e personalizados |
-| Sem incentivo à mudança de hábito | Gamificação e educação ambiental |
-| Foco em acompanhamento | Foco em sustentabilidade e economia |
+|--------------|------------|
+| Relatórios simples e limitados | Relatórios inteligentes, dinâmicos e personalizados |
+| Não estimulam mudança de hábito | Gamificação e educação ambiental integrada |
+| Apenas acompanham dados | Incentivam redução real do consumo |
 
 ---
 
 ## 🚀 Plano de Desenvolvimento
 
-1. **Pesquisa e validação:** entrevistas e questionários com potenciais usuários.  
-2. **MVP inicial:** protótipo com inserção manual e relatórios básicos.  
-3. **Testes piloto:** aplicação em residências e pequenas empresas.  
-4. **Integração IoT e parcerias:** evolução tecnológica e comercial.
+1. **Pesquisa e validação:** entrevistas com usuários e análise de mercado.  
+2. **MVP:** protótipo com inserção manual do consumo e relatórios básicos.  
+3. **Testes piloto:** aplicação em residências e pequenos negócios.  
+4. **Evolução da plataforma:** novas funcionalidades baseadas em feedbacks.
 
 ---
 
 ## 👨‍💻 Equipe
 
-- **Gustavo Albiero Zorzo**  
-- **Arthur Carvalho**  
-- **Matheus Fernando Camagro**  
-- **Felipe Andretta**
-- **João Victor de Faria e Souza**
-- **Gabriel Scandiuzzi**
+- [**Gustavo Albiero Zorzo**](https://github.com/gustavo-zorzo)  
+- [**Arthur Carvalho**](https://github.com/AthurProgramador)
+- [**Matheus Fernando Camagro**](https://github.com/MatheusCronograma)  
+- [**Felipe Andretta**](https://github.com/feandretta) 
+- [**João Victor de Faria e Souza**](https://github.com/jvfs6511)  
+- [**Gabriel Scandiuzzi**](https://github.com/gabrielscand)
 
 ---
-Este projeto está sob a licença MIT,
-Desenvolvido por estudantes da PUC Campinas.
+
+Projeto sob licença **MIT**.  
+Desenvolvido por estudantes da **PUC Campinas**.
