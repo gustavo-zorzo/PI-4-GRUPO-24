@@ -645,6 +645,7 @@ export default function HydroSaveSite() {
   const [establishments, setEstablishments] = useState([]);
   const [showEstForm, setShowEstForm] = useState(false);
   const [selectedEst, setSelectedEst] = useState(null);
+  const [editingEst, setEditingEst] = useState(null);
 
   const fetchEstablishments = async (u) => {
     if (!u) return setEstablishments([]);
@@ -747,6 +748,37 @@ export default function HydroSaveSite() {
       console.error('syncLocalToBackend failed overall', e);
     }
   };
+
+  async function handleDeleteEstablishment(est) {
+    if (!confirm(`Confirma excluir o estabelecimento "${est.nomeEstabelecimento}"?`)) return;
+    const id = est.id;
+    const ownerId = user?.id;
+    const ownerEmail = user?.email;
+    try {
+      const res = await fetch(`http://localhost:8080/api/estabelecimentos/${encodeURIComponent(id)}${ownerId ? `?ownerId=${encodeURIComponent(ownerId)}` : ownerEmail ? `?ownerEmail=${encodeURIComponent(ownerEmail)}` : ''}`, { method: 'DELETE' });
+      if (res.ok) {
+        // atualizado com sucesso no backend
+        fetchEstablishments(user);
+        return;
+      }
+      // se não ok, tentamos fallback
+    } catch (e) {
+      console.warn('Delete backend failed, falling back to localStorage', e);
+    }
+
+    // fallback: remover do localStorage e atualizar UI
+    try {
+      const ownerKey = (user?.id) || (user?.email) || 'anon';
+      const raw = localStorage.getItem('hs_estabelecimentos') || '{}';
+      const store = JSON.parse(raw);
+      store[ownerKey] = (store[ownerKey] || []).filter((x) => x.id !== id);
+      localStorage.setItem('hs_estabelecimentos', JSON.stringify(store));
+      // atualizar lista mostrada
+      setEstablishments((prev) => prev.filter((x) => x.id !== id));
+    } catch (le) {
+      console.error('Failed to delete from localStorage', le);
+    }
+  }
 
   React.useEffect(() => {
     try {
@@ -853,7 +885,11 @@ export default function HydroSaveSite() {
                       <p className="text-sm">Consumo médio: {e.consumoMedioMensalLitros ?? '-'} L/mês</p>
                       <p className="text-sm">Status: ativo</p>
                       <div className="mt-3">
-                        <Button variant="outline" onClick={() => setSelectedEst(e)}>Ver detalhes</Button>
+                        <div className="flex gap-2">
+                          <Button variant="outline" onClick={() => setSelectedEst(e)}>Ver detalhes</Button>
+                          <Button variant="ghost" onClick={() => { setEditingEst(e); setShowEstForm(true); }}>Editar</Button>
+                          <Button variant="destructive" onClick={() => handleDeleteEstablishment(e)}>Excluir</Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -873,11 +909,13 @@ export default function HydroSaveSite() {
     >
       <EstablishmentForm
         user={user}
+        initialEst={editingEst}
         onSaved={(saved) => {
+          setEditingEst(null);
           fetchEstablishments(user);
           setShowEstForm(false);
         }}
-        onClose={() => setShowEstForm(false)}
+        onClose={() => { setEditingEst(null); setShowEstForm(false); }}
       />
 
       <button

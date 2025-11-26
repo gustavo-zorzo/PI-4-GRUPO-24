@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-export default function EstablishmentForm({ user, onSaved, onClose }) {
+export default function EstablishmentForm({ user, onSaved, onClose, initialEst }) {
   const initialForm = {
     tipoImovel: "Casa",
     nomeEstabelecimento: "",
@@ -38,6 +38,40 @@ export default function EstablishmentForm({ user, onSaved, onClose }) {
       }
     } catch (e) {}
   }, []);
+
+  // quando inicialEst for fornecido (modo edição), preenche o form
+  useEffect(() => {
+    if (initialEst && initialEst.id) {
+      const map = {
+        tipoImovel: initialEst.tipoImovel || initialForm.tipoImovel,
+        nomeEstabelecimento: initialEst.nomeEstabelecimento || "",
+        rua: initialEst.rua || "",
+        numero: initialEst.numero || "",
+        bairro: initialEst.bairro || "",
+        cidade: initialEst.cidade || "",
+        estado: initialEst.estado || "",
+        cep: initialEst.cep || "",
+        pessoasQueUsam: initialEst.pessoasQueUsam || 1,
+        hidrometroIndividual: !!initialEst.hidrometroIndividual,
+        consumoMedioMensalLitros: initialEst.consumoMedioMensalLitros || 0,
+        temCaixaDagua: !!initialEst.temCaixaDagua,
+        capacidadeCaixaLitros: initialEst.capacidadeCaixaLitros || 0,
+        receberAlertas: !!initialEst.receberAlertas,
+        limiteMaxDiarioLitros: initialEst.limiteMaxDiarioLitros || 500,
+        verGraficos: !!initialEst.verGraficos,
+      };
+      // form expects cep maybe with mask; if digits length 8 add dash
+      try {
+        const digits = String(map.cep).replace(/\D/g, "");
+        if (digits.length === 8) map.cep = digits.slice(0, 5) + "-" + digits.slice(5);
+      } catch (e) {}
+      setForm(map);
+      // focus name field when editing
+      setTimeout(() => focusNameField(), 60);
+    } else {
+      setForm(initialForm);
+    }
+  }, [initialEst]);
 
   function focusNameField() {
     try {
@@ -188,20 +222,34 @@ export default function EstablishmentForm({ user, onSaved, onClose }) {
 
     try {
       // send ownerId or ownerEmail
+      // send ownerId or ownerEmail
       const ownerId = user?.id;
       const ownerEmail = user?.email;
       const q = ownerId
         ? `?ownerId=${encodeURIComponent(ownerId)}`
         : `?ownerEmail=${encodeURIComponent(ownerEmail)}`;
 
-      const res = await fetch(
-        `http://localhost:8080/api/estabelecimentos${q}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+      // se estiver editando um estabelecimento existente, usa PUT
+      let res;
+      if (initialEst && initialEst.id) {
+        res = await fetch(
+          `http://localhost:8080/api/estabelecimentos/${encodeURIComponent(initialEst.id)}${q}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
+      } else {
+        res = await fetch(
+          `http://localhost:8080/api/estabelecimentos${q}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
+      }
 
       if (!res.ok) {
         // tenta ler JSON, senão texto cru
@@ -237,32 +285,74 @@ export default function EstablishmentForm({ user, onSaved, onClose }) {
         const ownerId = user?.id;
         const ownerEmail = user?.email;
         const ownerKey = ownerId || ownerEmail || "anon";
-        const now = Date.now();
-        const localSaved = {
-          id: `local-${now}-${Math.floor(Math.random() * 10000)}`,
-          ownerId: ownerId || null,
-          ownerEmail: ownerEmail || null,
-          ...payload,
-          createdAtEpochMs: now,
-          updatedAtEpochMs: now,
-          _local: true,
-        };
-
         const storeRaw = localStorage.getItem("hs_estabelecimentos") || "{}";
         const store = JSON.parse(storeRaw);
         store[ownerKey] = store[ownerKey] || [];
-        store[ownerKey].push(localSaved);
-        localStorage.setItem("hs_estabelecimentos", JSON.stringify(store));
 
-        onSaved && onSaved(localSaved);
-        // reset form
-        setForm(initialForm);
-        setSavedSuccess(true);
-        setTimeout(() => {
-          setSavedSuccess(false);
-          if (onClose) onClose();
-        }, 300);
-        return;
+        if (initialEst && initialEst.id) {
+          // atualizar item local se existir, senão cria um novo local
+          const idx = store[ownerKey].findIndex((x) => x.id === initialEst.id);
+          const now = Date.now();
+          if (idx >= 0) {
+            const updated = { ...store[ownerKey][idx], ...payload, updatedAtEpochMs: now };
+            store[ownerKey][idx] = updated;
+            localStorage.setItem("hs_estabelecimentos", JSON.stringify(store));
+            onSaved && onSaved(updated);
+            setForm(initialForm);
+            setSavedSuccess(true);
+            setTimeout(() => {
+              setSavedSuccess(false);
+              if (onClose) onClose();
+            }, 300);
+            return;
+          }
+
+          // se não encontrou item localmente, criar novo local como fallback
+          const now2 = Date.now();
+          const localSaved = {
+            id: initialEst.id || `local-${now2}-${Math.floor(Math.random() * 10000)}`,
+            ownerId: ownerId || null,
+            ownerEmail: ownerEmail || null,
+            ...payload,
+            createdAtEpochMs: now2,
+            updatedAtEpochMs: now2,
+            _local: true,
+          };
+          store[ownerKey].push(localSaved);
+          localStorage.setItem("hs_estabelecimentos", JSON.stringify(store));
+          onSaved && onSaved(localSaved);
+          setForm(initialForm);
+          setSavedSuccess(true);
+          setTimeout(() => {
+            setSavedSuccess(false);
+            if (onClose) onClose();
+          }, 300);
+          return;
+        } else {
+          const now3 = Date.now();
+          const localSaved = {
+            id: `local-${now3}-${Math.floor(Math.random() * 10000)}`,
+            ownerId: ownerId || null,
+            ownerEmail: ownerEmail || null,
+            ...payload,
+            createdAtEpochMs: now3,
+            updatedAtEpochMs: now3,
+            _local: true,
+          };
+
+          store[ownerKey].push(localSaved);
+          localStorage.setItem("hs_estabelecimentos", JSON.stringify(store));
+
+          onSaved && onSaved(localSaved);
+          // reset form
+          setForm(initialForm);
+          setSavedSuccess(true);
+          setTimeout(() => {
+            setSavedSuccess(false);
+            if (onClose) onClose();
+          }, 300);
+          return;
+        }
       } catch (localErr) {
         console.error("Local save failed", localErr);
         setError(err.message || String(err));
