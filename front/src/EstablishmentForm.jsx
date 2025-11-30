@@ -393,7 +393,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
   ];
 
   return (
-    <Card className="rounded-2xl border-muted">
+    <Card className="rbg-white text-black dark:bg-slate-900 dark:text-white">
       <CardHeader>
         <CardTitle>Cadastre seu Estabelecimento</CardTitle>
       </CardHeader>
