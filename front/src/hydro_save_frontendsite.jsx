@@ -913,6 +913,8 @@ export default function HydroSaveSite() {
         onSaved={(saved) => {
           setEditingEst(null);
           fetchEstablishments(user);
+          // open details/monitoring for the saved establishment
+          setSelectedEst(saved);
           setShowEstForm(false);
         }}
         onClose={() => { setEditingEst(null); setShowEstForm(false); }}
@@ -936,29 +938,153 @@ export default function HydroSaveSite() {
 
 
             {/* Details modal for selected establishment */}
-            {selectedEst && (
-              <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 px-4">
-                <div className="rounded-2xl border bg-background p-6 shadow-lg">
-                  <div className="flex items-start justify-between">
-                    <h3 className="text-xl font-semibold">Detalhes do Estabelecimento</h3>
-                    <button onClick={() => setSelectedEst(null)} className="text-sm text-muted-foreground">Fechar</button>
-                  </div>
-                  <div className="mt-4 space-y-2 text-sm">
-                    <div><strong>Nome:</strong> {selectedEst.nomeEstabelecimento}</div>
-                    <div><strong>Tipo:</strong> {selectedEst.tipoImovel}</div>
-                    <div><strong>Endereço:</strong> {selectedEst.rua}, {selectedEst.numero} - {selectedEst.bairro}, {selectedEst.cidade} / {selectedEst.estado} - CEP {selectedEst.cep}</div>
-                    <div><strong>Pessoas:</strong> {selectedEst.pessoasQueUsam}</div>
-                    <div><strong>Hidrômetro individual:</strong> {selectedEst.hidrometroIndividual ? 'Sim' : 'Não'}</div>
-                    <div><strong>Consumo médio (L/mês):</strong> {selectedEst.consumoMedioMensalLitros}</div>
-                    <div><strong>Tem caixa d'água:</strong> {selectedEst.temCaixaDagua ? 'Sim' : 'Não'}</div>
-                    {selectedEst.capacidadeCaixaLitros && <div><strong>Capacidade caixa (L):</strong> {selectedEst.capacidadeCaixaLitros}</div>}
-                    <div><strong>Receber alertas:</strong> {selectedEst.receberAlertas ? 'Sim' : 'Não'}</div>
-                    <div><strong>Limite diário (L):</strong> {selectedEst.limiteMaxDiarioLitros}</div>
-                    <div><strong>Ver gráficos:</strong> {selectedEst.verGraficos ? 'Sim' : 'Não'}</div>
+            {selectedEst && (() => {
+              // compute report values safely
+              const monthly = Number(selectedEst.consumoMedioMensalLitros) || 0;
+              const daily = Math.round(monthly / 30) || 0;
+              const pessoas = Math.max(1, Number(selectedEst.pessoasQueUsam) || 1);
+              const perCapita = Math.round(daily / pessoas) || 0;
+              let classification = "Médio";
+              if (perCapita < 70) classification = "Baixo";
+              else if (perCapita > 120) classification = "Alto";
+
+              const idealMinMonthly = 70 * pessoas * 30;
+              const idealMaxMonthly = 90 * pessoas * 30;
+              const diffToIdealMax = monthly - idealMaxMonthly;
+              const diffPct = idealMaxMonthly > 0 ? Math.round((monthly - idealMaxMonthly) / idealMaxMonthly * 100) : 0;
+
+              const receber = !!selectedEst.receberAlertas;
+
+              const alerts = [];
+              if (!receber) {
+                // no alerts
+              } else {
+                if (daily > (Number(selectedEst.limiteMaxDiarioLitros) || 0)) {
+                  alerts.push({ title: 'Ultrapassou o limite diário', desc: `Consumo em 24h (${daily} L) maior que o limite configurado (${selectedEst.limiteMaxDiarioLitros} L).` });
+                } else if (daily > Math.round((Number(selectedEst.limiteMaxDiarioLitros) || 0) * 0.9)) {
+                  alerts.push({ title: 'Próximo do limite diário', desc: `Consumo em 24h (${daily} L) atingiu >90% do limite (${selectedEst.limiteMaxDiarioLitros} L).` });
+                }
+
+                if (perCapita > 140) {
+                  alerts.push({ title: 'Consumo por pessoa elevado', desc: `Média por pessoa ≈ ${perCapita} L/dia, acima do esperado para ${pessoas} pessoas.` });
+                }
+
+                // potential leak heuristic (we can't observe time-series here, but suggest the rule)
+                alerts.push({ title: 'Verificar recargas da caixa d\'água', desc: selectedEst.temCaixaDagua ? 'Monitore frequência de recarga da caixa de água: recargas frequentes podem indicar vazamento ou uso intenso.' : 'Sem caixa d\'água; monitore consumo noturno para identificar vazamentos.' });
+
+                if (selectedEst.tipoImovel && selectedEst.tipoImovel.toLowerCase().includes('empresa')) {
+                  alerts.push({ title: 'Picos operacionais', desc: 'Empresas costumam ter horários de pico; defina janelas de operação para evitar picos desnecessários.' });
+                }
+              }
+
+              // generate tips tailored by type
+              const tips = [];
+              const tipo = (selectedEst.tipoImovel || '').toLowerCase();
+              if (tipo.includes('casa')) {
+                tips.push('Reduzir 1 minuto em cada banho; instalar arejadores nos chuveiros.');
+                tips.push('Usar máquina de lavar apenas com carga completa; preferir ciclos econômicos.');
+                if (selectedEst.temCaixaDagua) {
+                  tips.push('Monitorar número de recargas da caixa (2000 L). Se >1/dia, agendar inspeção da boia e checar vazamentos.');
+                }
+                tips.push('Concentrar regas do jardim em horários com menor evaporação (manhã cedo ou fim de tarde).');
+              } else if (tipo.includes('apartamento')) {
+                tips.push('Verificar torneiras comuns e áreas compartilhadas; reduzir tempo de banho.');
+                tips.push('Se hidrômetro não for individual, negociar métricas com condomínio para evitar repasses injustos.');
+              } else if (tipo.includes('empresa') || tipo.includes('comércio')) {
+                tips.push('Mapear processos que consomem mais água e otimizar horários para reduzir picos.');
+                tips.push('Instalar dispositivos de controle em aplicações de limpeza e irrigação; treinar equipe para práticas de economia.');
+              } else {
+                tips.push('Reveja hábitos de uso e verifique se existem vazamentos ou equipamentos ineficientes.');
+              }
+
+              return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+                  {/* Backdrop */}
+                  <div
+                    className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                    onClick={() => setSelectedEst(null)}
+                  />
+
+                  {/* Modal panel */}
+                  <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl border bg-white text-foreground dark:bg-slate-800 dark:text-white p-6 shadow-xl z-10">
+                    <div className="flex items-start justify-between">
+                      <h3 className="text-xl font-semibold">{selectedEst.nomeEstabelecimento} — Visão Geral</h3>
+                      <button onClick={() => setSelectedEst(null)} className="text-sm text-muted-foreground">Fechar</button>
+                    </div>
+
+                    <div className="mt-4 grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2 text-sm">
+                        <div><strong>Tipo:</strong> {selectedEst.tipoImovel}</div>
+                        <div><strong>Endereço:</strong> {selectedEst.rua}, {selectedEst.numero} - {selectedEst.bairro}, {selectedEst.cidade} / {selectedEst.estado} - CEP {selectedEst.cep}</div>
+                        <div><strong>Pessoas:</strong> {selectedEst.pessoasQueUsam}</div>
+                        <div><strong>Hidrômetro individual:</strong> {selectedEst.hidrometroIndividual ? 'Sim' : 'Não'}</div>
+                        <div><strong>Consumo médio (L/mês):</strong> {monthly.toLocaleString()}</div>
+                        <div><strong>Média diária estimada (L):</strong> {daily.toLocaleString()} L/dia</div>
+                        <div><strong>Consumo per capita:</strong> {perCapita} L/pessoa/dia — <em>{classification}</em></div>
+                        <div><strong>Tem caixa d'água:</strong> {selectedEst.temCaixaDagua ? 'Sim' : 'Não'}</div>
+                        {selectedEst.capacidadeCaixaLitros && <div><strong>Capacidade caixa (L):</strong> {selectedEst.capacidadeCaixaLitros}</div>}
+                        <div><strong>Limite diário (L):</strong> {selectedEst.limiteMaxDiarioLitros}</div>
+                      </div>
+
+                      <div className="space-y-3 text-sm">
+                        <Card className="rounded-xl border-muted">
+                          <CardHeader>
+                            <CardTitle>Monitoramento</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground">Com base nos dados informados, o consumo diário estimado é <strong>{daily} L/dia</strong>. Use o hidrômetro individual para identificar picos horários e a frequência de recargas da caixa d'água para detectar anomalias.</p>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="rounded-xl border-muted">
+                          <CardHeader>
+                            <CardTitle>Alertas</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            {!receber ? (
+                              <p>Este estabelecimento optou por não receber alertas.</p>
+                            ) : (
+                              <ul className="list-disc pl-5 text-sm">
+                                {alerts.map((a, i) => (
+                                  <li key={i}><strong>{a.title}:</strong> {a.desc}</li>
+                                ))}
+                                {alerts.length === 0 && <li>Nenhum alerta ativo com os dados atuais.</li>}
+                              </ul>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid gap-4 md:grid-cols-2">
+                      <Card className="rounded-xl">
+                        <CardHeader>
+                          <CardTitle>Relatórios</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm">Consumo mensal informado: <strong>{monthly.toLocaleString()} L</strong>.</p>
+                          <p className="text-sm">Faixa de consumo ideal estimada para {pessoas} pessoas: <strong>{idealMinMonthly.toLocaleString()} L</strong> — <strong>{idealMaxMonthly.toLocaleString()} L</strong> por mês.</p>
+                          <p className="text-sm">Diferença para o limite superior ideal: <strong>{diffToIdealMax >= 0 ? `+${diffToIdealMax.toLocaleString()} L (${diffPct}%)` : `${diffToIdealMax.toLocaleString()} L`}</strong>.</p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="rounded-xl">
+                        <CardHeader>
+                          <CardTitle>Dicas Personalizadas</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="list-disc pl-5 text-sm">
+                            {tips.map((t, i) => (
+                              <li key={i}>{t}</li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             <div>
               {page === "home" && (
