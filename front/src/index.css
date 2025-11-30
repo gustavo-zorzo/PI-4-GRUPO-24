@@ -4,11 +4,11 @@
   --background: 0 0% 100%;
   --foreground: 222 47% 5%;
 
-  /* Áreas secundárias (caixas atrás do conteúdo) */
+ 
   --muted: 210 20% 96%;
   --muted-foreground: 222 25% 26%;
 
-  /* Borda real — contraste bom */
+  
   --border: 215 15% 75%;
   --input: 215 15% 75%;
   --ring: 215 35% 45%;
@@ -35,7 +35,7 @@
   --ring: 212.7 26.8% 83.9%;
 }
 
-/* === Base: sem @apply, usando as tokens diretamente === */
+
 @layer base {
   *, ::before, ::after {
     border-color: hsl(var(--border));
@@ -46,43 +46,43 @@
   }
 }
 
-/* Slider usado no componente */
+
 .range { height: 0.5rem; border-radius: 9999px; background: hsl(var(--muted)); outline: none; }
-/* Estilo global para selects no dark mode */
+
 select {
   background-color: #0a1528 !important;
   color: white !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Estilo do dropdown aberto */
+
 select option {
   background-color: #0a1528 !important;
   color: white !important;
 }
-/* Estilo do slider (input range) */
+
 .range {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
   height: 6px;
   border-radius: 9999px;
-  background-color: rgba(255, 255, 255, 0.12); /* trilho mais escuro */
+  background-color: rgba(255, 255, 255, 0.12); 
 }
 
-/* “bolinha” no Chrome/Safari/Edge */
+
 .range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 14px;
   height: 14px;
   border-radius: 9999px;
-  background-color: #f9fafb; /* quase branco */
-  border: 2px solid rgba(15, 23, 42, 0.9); /* escuro */
+  background-color: #f9fafb; 
+  border: 2px solid rgba(15, 23, 42, 0.9); 
   cursor: pointer;
 }
 
-/* “bolinha” no Firefox */
+
 .range::-moz-range-thumb {
   width: 14px;
   height: 14px;
@@ -90,4 +90,36 @@ select option {
   background-color: #f9fafb;
   border: 2px solid rgba(15, 23, 42, 0.9);
   cursor: pointer;
+}
+
+.range {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: #cbd5e1 !important;   
+  outline: none;
+}
+
+.range::-webkit-slider-thumb {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 9999px;
+  background-color: #0f172a !important;  
+  appearance: none;
+  margin-top: -1px;
+}
+
+.range::-moz-range-thumb {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 9999px;
+  background-color: #0f172a !important; 
+}
+
+.dark .range {
+  background-color: #1e293b !important;
+}
+
+.dark .range::-webkit-slider-thumb,
+.dark .range::-moz-range-thumb {
+  background-color: #f1f5f9 !important;
 }
