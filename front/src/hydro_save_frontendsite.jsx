@@ -31,6 +31,8 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { LoginModal } from "./LoginModal";
 import EstablishmentForm from "./EstablishmentForm";
+import { jsPDF } from "jspdf";
+
 
 // ------------------------------------------------------------
 // HydroSave — Interactive React Landing + Live Demo
@@ -929,7 +931,9 @@ export default function HydroSaveSite() {
     </div>
   </div>
 )}
-            
+
+
+               
 
 
 
@@ -977,6 +981,7 @@ export default function HydroSaveSite() {
                 }
               }
 
+              
               
               const tips = [];
               const tipo = (selectedEst.tipoImovel || '').toLowerCase();
@@ -1175,7 +1180,8 @@ export default function HydroSaveSite() {
               <Badge className="bg-green-600/10 text-green-400">Disponível</Badge>
             </td>
             <td className="text-right">
-              <Button variant="outline" size="sm" className="rounded-xl">Gerar</Button>
+              <Button variant="outline" size="sm" className="rounded-xl" onClick={() => gerarPdf(est)} > Gerar </Button>
+
             </td>
           </tr>
 
@@ -1310,7 +1316,4 @@ export default function HydroSaveSite() {
   );
 }
 
-// Tailwind helper para o input range (global.css):
-// .range { @apply h-2 rounded-full bg-muted outline-none; }
-// .range::-webkit-slider-thumb { @apply h-4 w-4 rounded-full bg-primary; appearance: none; margin-top: -6px; }
-// .range::-moz-range-thumb { height: 16px; width: 16px; border-radius: 9999px; background: hsl(var(--primary)); }
+

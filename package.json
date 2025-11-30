@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/gustavo-zorzo/PI-4-GRUPO-24/issues"
   },
-  "homepage": "https://github.com/gustavo-zorzo/PI-4-GRUPO-24#readme"
+  "homepage": "https://github.com/gustavo-zorzo/PI-4-GRUPO-24#readme",
+  "dependencies": {
+    "jspdf": "^3.0.4"
+  }
 }
