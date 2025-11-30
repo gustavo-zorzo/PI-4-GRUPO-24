@@ -8,7 +8,7 @@ import { X } from "lucide-react";
 export function LoginModal({ isOpen, onClose, onLoggedIn }) {
   const [isSignup, setIsSignup] = useState(false);
 
-  // Erro de senha
+  
   const [passwordError, setPasswordError] = useState("");
 
   const [formData, setFormData] = useState({
@@ -18,7 +18,7 @@ export function LoginModal({ isOpen, onClose, onLoggedIn }) {
     confirmPassword: "",
   });
 
-  // Limpa erro ao digitar
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -32,14 +32,14 @@ export function LoginModal({ isOpen, onClose, onLoggedIn }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validação de senha sem popup
+    
     if (isSignup && formData.password !== formData.confirmPassword) {
       setPasswordError("As senhas não coincidem");
       return;
     }
 
     try {
-      // Local test account fallback (admin/admin)
+      
       if (!isSignup) {
         const userCandidate = (formData.email || "").trim();
         const passCandidate = (formData.password || "").trim();
@@ -86,12 +86,12 @@ export function LoginModal({ isOpen, onClose, onLoggedIn }) {
 
       const user = await response.json();
 
-      // Login automático
+      
       localStorage.setItem("hs_user", JSON.stringify(user));
-      // informa ao pai se o login veio via cadastro (isSignup)
+      
       onLoggedIn?.(user, { signup: !!isSignup });
 
-      // Limpa form
+      
       setFormData({
         name: "",
         email: "",

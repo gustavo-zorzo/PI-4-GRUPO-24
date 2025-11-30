@@ -28,7 +28,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
   const nameRef = useRef(null);
 
   useEffect(() => {
-    // focus no campo nome quando o formulário aparecer
+    
     try {
       if (nameRef.current && typeof nameRef.current.focus === "function") {
         nameRef.current.focus();
@@ -39,7 +39,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
     } catch (e) {}
   }, []);
 
-  // quando inicialEst for fornecido (modo edição), preenche o form
+  
   useEffect(() => {
     if (initialEst && initialEst.id) {
       const map = {
@@ -60,13 +60,13 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
         limiteMaxDiarioLitros: initialEst.limiteMaxDiarioLitros || 500,
         verGraficos: !!initialEst.verGraficos,
       };
-      // form expects cep maybe with mask; if digits length 8 add dash
+      
       try {
         const digits = String(map.cep).replace(/\D/g, "");
         if (digits.length === 8) map.cep = digits.slice(0, 5) + "-" + digits.slice(5);
       } catch (e) {}
       setForm(map);
-      // focus name field when editing
+      
       setTimeout(() => focusNameField(), 60);
     } else {
       setForm(initialForm);
@@ -91,15 +91,15 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
     const { name, value, type, checked } = e.target;
     let v = value;
 
-    // regras específicas
+    
     if (name === "rua" || name === "bairro" || name === "cidade") {
-      // apenas letras (com acentos) e espaços
+      
       v = value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g, "");
     } else if (name === "numero") {
-      // apenas dígitos
+      
       v = value.replace(/\D/g, "");
     } else if (name === "cep") {
-      // só números + máscara 00000-000
+      
       let digits = value.replace(/\D/g, "");
       if (digits.length > 8) digits = digits.slice(0, 8);
       if (digits.length <= 5) {
@@ -121,7 +121,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
     setSaving(true);
     setError(null);
 
-    // === VALIDAÇÕES ===
+    
     if (!form.nomeEstabelecimento.trim()) {
       setError("Informe o nome do estabelecimento.");
       setSaving(false);
@@ -207,7 +207,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
       bairro: form.bairro.trim(),
       cidade: form.cidade.trim(),
       estado: form.estado,
-      cep: cepDigits, // envia só os dígitos para o backend
+      cep: cepDigits, 
       pessoasQueUsam: pessoas,
       hidrometroIndividual: !!form.hidrometroIndividual,
       consumoMedioMensalLitros: consumo,
@@ -221,15 +221,14 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
     };
 
     try {
-      // send ownerId or ownerEmail
-      // send ownerId or ownerEmail
+      
       const ownerId = user?.id;
       const ownerEmail = user?.email;
       const q = ownerId
         ? `?ownerId=${encodeURIComponent(ownerId)}`
         : `?ownerEmail=${encodeURIComponent(ownerEmail)}`;
 
-      // se estiver editando um estabelecimento existente, usa PUT
+      
       let res;
       if (initialEst && initialEst.id) {
         res = await fetch(
@@ -252,7 +251,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
       }
 
       if (!res.ok) {
-        // tenta ler JSON, senão texto cru
+        
         let body;
         try {
           body = await res.json();
@@ -270,17 +269,17 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
 
       const saved = await res.json();
       onSaved && onSaved(saved);
-      // reset form
+      
       setForm(initialForm);
       setSavedSuccess(true);
-      // fecha o módulo depois de salvar
+      
       setTimeout(() => {
         setSavedSuccess(false);
         if (onClose) onClose();
       }, 300);
     } catch (err) {
       console.error("POST error, falling back to localStorage:", err);
-      // fallback: salvar localmente se o backend não estiver acessível
+      
       try {
         const ownerId = user?.id;
         const ownerEmail = user?.email;
@@ -290,7 +289,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
         store[ownerKey] = store[ownerKey] || [];
 
         if (initialEst && initialEst.id) {
-          // atualizar item local se existir, senão cria um novo local
+          
           const idx = store[ownerKey].findIndex((x) => x.id === initialEst.id);
           const now = Date.now();
           if (idx >= 0) {
@@ -307,7 +306,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
             return;
           }
 
-          // se não encontrou item localmente, criar novo local como fallback
+          
           const now2 = Date.now();
           const localSaved = {
             id: initialEst.id || `local-${now2}-${Math.floor(Math.random() * 10000)}`,
@@ -344,7 +343,7 @@ export default function EstablishmentForm({ user, onSaved, onClose, initialEst }
           localStorage.setItem("hs_estabelecimentos", JSON.stringify(store));
 
           onSaved && onSaved(localSaved);
-          // reset form
+          
           setForm(initialForm);
           setSavedSuccess(true);
           setTimeout(() => {

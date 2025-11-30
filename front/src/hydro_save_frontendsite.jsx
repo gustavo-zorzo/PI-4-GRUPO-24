@@ -32,9 +32,7 @@ import { Separator } from "@/components/ui/separator";
 import { LoginModal } from "./LoginModal";
 import EstablishmentForm from "./EstablishmentForm";
 
-// ------------------------------------------------------------
-// HydroSave — Interactive React Landing + Live Demo
-// ------------------------------------------------------------
+
 
 const features = [
   {
@@ -287,7 +285,7 @@ function FeatureGrid() {
 }
 
 function useMockData(multiplier) {
-  // Gera dados de 30 dias com padrão base + ruído, afetado pelo multiplicador (meta/limite)
+  
   return useMemo(() => {
     const arr = Array.from({ length: 30 }, (_, i) => i + 1).map((d) => {
       const base = 320 + Math.sin(d / 2.8) * 40 + Math.cos(d / 3.7) * 30;
@@ -300,9 +298,9 @@ function useMockData(multiplier) {
 }
 
 function DemoPanel() {
-  const [target, setTarget] = useState(350); // L/dia
+  const [target, setTarget] = useState(350); 
   const [ecoMode, setEcoMode] = useState(true);
-  const multiplier = ecoMode ? 0.88 : 1; // modo eco reduz consumo
+  const multiplier = ecoMode ? 0.88 : 1; 
   const data = useMockData(multiplier);
 
   const avg = useMemo(
@@ -657,7 +655,7 @@ export default function HydroSaveSite() {
       if (!res.ok) return setEstablishments([]);
       const data = await res.json();
       setEstablishments(data || []);
-      // tentar sincronizar quaisquer itens locais pendentes para o backend
+      
       try {
         await syncLocalToBackend(u);
       } catch (syncErr) {
@@ -719,21 +717,21 @@ export default function HydroSaveSite() {
             body: JSON.stringify(payload),
           });
           if (resp.ok) {
-            // remove este item do armazenamento local
+            
             store[ownerKey] = store[ownerKey].filter((x) => x.id !== it.id);
             localStorage.setItem('hs_estabelecimentos', JSON.stringify(store));
           } else {
-            // se falhar no servidor, não prossegue com esse item
+            
             const text = await resp.text().catch(() => null);
             console.warn('Failed to sync item', it.id, resp.status, text);
           }
         } catch (e) {
           console.error('Network error while syncing', e);
-          throw e; // abort sync loop on network error
+          throw e; 
         }
       }
 
-      // após sincronizar, refazer fetch para atualizar a lista do backend
+      
       try {
         const q2 = u.id ? `?ownerId=${encodeURIComponent(u.id)}` : `?ownerEmail=${encodeURIComponent(u.email)}`;
         const r2 = await fetch(`http://localhost:8080/api/estabelecimentos${q2}`);
@@ -742,7 +740,7 @@ export default function HydroSaveSite() {
           setEstablishments(d2 || []);
         }
       } catch (e) {
-        // ignore
+       
       }
     } catch (e) {
       console.error('syncLocalToBackend failed overall', e);
@@ -757,23 +755,23 @@ export default function HydroSaveSite() {
     try {
       const res = await fetch(`http://localhost:8080/api/estabelecimentos/${encodeURIComponent(id)}${ownerId ? `?ownerId=${encodeURIComponent(ownerId)}` : ownerEmail ? `?ownerEmail=${encodeURIComponent(ownerEmail)}` : ''}`, { method: 'DELETE' });
       if (res.ok) {
-        // atualizado com sucesso no backend
+        
         fetchEstablishments(user);
         return;
       }
-      // se não ok, tentamos fallback
+      
     } catch (e) {
       console.warn('Delete backend failed, falling back to localStorage', e);
     }
 
-    // fallback: remover do localStorage e atualizar UI
+    
     try {
       const ownerKey = (user?.id) || (user?.email) || 'anon';
       const raw = localStorage.getItem('hs_estabelecimentos') || '{}';
       const store = JSON.parse(raw);
       store[ownerKey] = (store[ownerKey] || []).filter((x) => x.id !== id);
       localStorage.setItem('hs_estabelecimentos', JSON.stringify(store));
-      // atualizar lista mostrada
+      
       setEstablishments((prev) => prev.filter((x) => x.id !== id));
     } catch (le) {
       console.error('Failed to delete from localStorage', le);
@@ -790,7 +788,7 @@ export default function HydroSaveSite() {
         localStorage.setItem("hs:theme", "light");
       }
     } catch (e) {
-      // ignore in SSR or restricted environments
+      
     }
   }, [dark]);
 
@@ -820,7 +818,7 @@ export default function HydroSaveSite() {
           isOpen={loginOpen}
           onClose={() => setLoginOpen(false)}
           onLoggedIn={(u/*, ctx */) => {
-            // Não abrir automaticamente o formulário; usuário deve clicar no CTA
+            
             setUser(u);
             setLoginOpen(false);
             setPage("home");
@@ -839,7 +837,7 @@ export default function HydroSaveSite() {
             <Footer />
           </>
         ) : (
-          // App protegido (Home + páginas internas)
+          
           <div className="mx-auto max-w-7xl px-6 py-8">
             <div className="mb-6 flex items-center justify-between">
               <div>
@@ -913,7 +911,7 @@ export default function HydroSaveSite() {
         onSaved={(saved) => {
           setEditingEst(null);
           fetchEstablishments(user);
-          // open details/monitoring for the saved establishment
+          
           setSelectedEst(saved);
           setShowEstForm(false);
         }}
@@ -939,7 +937,7 @@ export default function HydroSaveSite() {
 
             {/* Details modal for selected establishment */}
             {selectedEst && (() => {
-              // compute report values safely
+              
               const monthly = Number(selectedEst.consumoMedioMensalLitros) || 0;
               const daily = Math.round(monthly / 30) || 0;
               const pessoas = Math.max(1, Number(selectedEst.pessoasQueUsam) || 1);
@@ -957,7 +955,7 @@ export default function HydroSaveSite() {
 
               const alerts = [];
               if (!receber) {
-                // no alerts
+                
               } else {
                 if (daily > (Number(selectedEst.limiteMaxDiarioLitros) || 0)) {
                   alerts.push({ title: 'Ultrapassou o limite diário', desc: `Consumo em 24h (${daily} L) maior que o limite configurado (${selectedEst.limiteMaxDiarioLitros} L).` });
@@ -969,7 +967,7 @@ export default function HydroSaveSite() {
                   alerts.push({ title: 'Consumo por pessoa elevado', desc: `Média por pessoa ≈ ${perCapita} L/dia, acima do esperado para ${pessoas} pessoas.` });
                 }
 
-                // potential leak heuristic (we can't observe time-series here, but suggest the rule)
+                
                 alerts.push({ title: 'Verificar recargas da caixa d\'água', desc: selectedEst.temCaixaDagua ? 'Monitore frequência de recarga da caixa de água: recargas frequentes podem indicar vazamento ou uso intenso.' : 'Sem caixa d\'água; monitore consumo noturno para identificar vazamentos.' });
 
                 if (selectedEst.tipoImovel && selectedEst.tipoImovel.toLowerCase().includes('empresa')) {
