@@ -977,7 +977,7 @@ export default function HydroSaveSite() {
                 }
               }
 
-              // generate tips tailored by type
+              
               const tips = [];
               const tipo = (selectedEst.tipoImovel || '').toLowerCase();
               if (tipo.includes('casa')) {
